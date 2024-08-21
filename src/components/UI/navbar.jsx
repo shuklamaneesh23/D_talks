@@ -94,7 +94,7 @@ export default function Navbar() {
             <Link href="/lend">Chat</Link>
           </li>
           <li>
-            <Link href="/lend">Ask Doubt</Link>
+            <Link href="/talks/askDoubt">Ask Doubt</Link>
           </li>
         </ul>
       </div>

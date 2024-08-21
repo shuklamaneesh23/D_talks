@@ -1,121 +1,37 @@
+"use client";
 import React from 'react';
+import { useEffect } from 'react';
 import QuestionItem from './questionItem';
 
-const questions = [
-    {
-        title: "chrome version Version 127.0.6533.120 (Official Build) (64-bit) WebDriver issue",
-        description: "SO i have the chrome version Version 127.0.6533.120 (Official Build) (64-bit). I need to use the webdriver...",
-        tags: ["python", "selenium-webdriver"],
-        votes: 0,
-        answers: 0,
-        views: 2,
-        author: "marcus pauly",
-        time: "51 secs ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Create custom QML PdfStyle",
-        description: "I'm developing an application (pdf reader) in QT/QML using PdfMultiPageView control and Qt.Pdf library...",
-        tags: ["pdf", "qml"],
-        votes: 1,
-        answers: 0,
-        views: 3,
-        author: "Matteo Giampaoli",
-        time: "2 mins ago",
-    },
-    {
-        title: "Github Actions uses system ruby instead of rbenv version",
-        description: "This actions runs fastlane on a macstadium runner, rbenv is setup to use 2.7.x but github action...",
-        tags: ["react-native", "github-actions", "rbenv"],
-        votes: 0,
-        answers: 0,
-        views: 4,
-        author: "Olivier",
-        time: "2 mins ago",
-    },
-    // Add more questions as needed
-];
 
 function QuestionsList() {
+
+
+    const [questions, setQuestions] = React.useState([]);
+    //write a function to fetch questions from the backend using this api "http://localhost:9000/api/v1/questions/allQuestions" --> use useEffect to call the function
+    const fetchQuestions = async () => {
+        try {
+            const response = await fetch('http://localhost:9000/api/v1/questions/allQuestions');
+            if (!response.ok) {
+                throw new Error('Failed to fetch questions.');
+            }
+            const data = await response.json();
+            console.log("data", data);
+            setQuestions(data);
+        }
+        catch (error) {
+            console.log("Error fetching questions");
+        }
+    }
+
+    useEffect(() => {
+        fetchQuestions();
+    }, []);
+
+
+
+
+
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-white shadow-md rounded-lg">
             {questions.map((question, index) => (

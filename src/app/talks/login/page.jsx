@@ -19,7 +19,7 @@ export default function RegisterLogin() {
     const [message, setMessage] = useState(null);
    
 
-    const { setUser,setMail } = React.useContext(UserContext);
+    const { setUser,setMail,user } = React.useContext(UserContext);
 
     const router = useRouter();
 
@@ -65,6 +65,7 @@ export default function RegisterLogin() {
             router.push("/");
             setUser(auth.currentUser.displayName);
             setMail(auth.currentUser.email);
+            console.log(user);
         } catch (err) {
             setError(err.message);
         }
