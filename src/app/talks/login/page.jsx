@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import React from "react";
+import axios from "axios";
 import { auth, googleProvider } from "@/lib/firebase";
 import {
     createUserWithEmailAndPassword,
@@ -68,6 +69,19 @@ export default function RegisterLogin() {
             setError(err.message);
         }
     };
+
+
+    const saveChanges = async () => {
+        try {
+            const res=await axios.post("http://localhost:8000/api/users",{
+                email:email,
+                username:username
+            });
+            console.log(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="flex justify-center items-center w-screen h-screen">
@@ -179,6 +193,7 @@ export default function RegisterLogin() {
                             <button
                                 className="w-full mt-4 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 ease-in-out"
                                 onClick={() => {
+                                    saveChanges();
                                     setIsOpen(false);
                                     console.log("Changes saved:", { email, username });
                                 }}
