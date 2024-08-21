@@ -1,116 +1,258 @@
 "use client";
-import React, { useState,useEffect,useContext } from 'react';
-import { IconChevronUp, IconChevronDown } from '@tabler/icons-react';
-import UserContext from '@/context/UserContext';
+import React, { useState, useEffect, useContext } from "react";
+import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
+import UserContext from "@/context/UserContext";
+import QuestionTime from "@/components/utils/timeCalculater";
 
-export default function StackOverflowQuestionView({params}) {
-    console.log("shukla",params);
+export default function StackOverflowQuestionView({ params }) {
     const id = params.id;
-    console.log("maneesh",id);
 
     const { user, mail } = useContext(UserContext);
-    
     console.log("user", user);
-    console.log("mail",mail);
+    console.log("mail", mail);
+
     const [question, setQuestion] = useState({
-        title: '',
-        content: '',
+        title: "",
+        content: "",
         upvotes: 0,
         downvotes: 0,
         tags: [],
-        answers: []
+        answers: [],
     });
 
     useEffect(() => {
         const getDetailedQuestion = async () => {
             try {
-                const response = await fetch(`http://localhost:9000/api/v1/questions/getQuestion/${id}`);
+                const response = await fetch(
+                    `http://localhost:9000/api/v1/questions/getQuestion/${id}`
+                );
                 if (!response.ok) {
-                    throw new Error('Failed to fetch question.');
+                    throw new Error("Failed to fetch question.");
                 }
                 const data = await response.json();
                 console.log("data", data);
                 setQuestion(data);
-            }
-            catch (error) {
+            } catch (error) {
                 console.log("Error fetching question");
             }
-        }
-    
+        };
+
         getDetailedQuestion();
     }, [id]);
 
+    const [newAnswer, setNewAnswer] = useState("");
+    const [code, setCode] = useState("");
+    const [error, setError] = useState("");
+    const [userVoteStatus, setUserVoteStatus] = useState("none");
 
-    const [newAnswer, setNewAnswer] = useState('');
-    const [error, setError] = useState('');
-
-    const handleUpvote = () => {
-        setQuestion({ ...question, votes: question.upvotes + 1 });
-    };
-
-    const handleDownvote = () => {
-        setQuestion({ ...question, votes: question.downvotes - 1 });
-    };
-
-    const handleAnswerUpvote = (id) => {
-        const updatedAnswers = question.answers.map(answer =>
-            answer.id === id ? { ...answer, votes: answer.votes + 1 } : answer
+    const handleUpvote = async () => {
+        const response = await fetch(
+            `http://localhost:9000/api/v1/votes/upvote/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json", // Set content type to JSON
+                },
+                body: JSON.stringify({ mail }), // Serialize the object to JSON
+            }
         );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log("Mail", mail);
+            console.error("Failed to upvote the question:", errorText);
+            return;
+        }
+        console.log("userVoteStatus", userVoteStatus);
+        if (userVoteStatus === "downvoted") {
+            // If previously downvoted, add 2 for the new upvote
+            setQuestion({
+                ...question,
+                upvotes: question.upvotes + 1,
+                downvotes: question.downvotes - 1,
+            });
+            console.log("MshuklaJi");
+            console.log(question.upvotes-question.downvotes);
+        } else if (userVoteStatus === "none") {
+            // If no previous vote, simply add 1
+            setQuestion({
+                ...question,
+                upvotes: question.upvotes + 1,
+            });
+        }
+
+        // Update user's voting status to "upvoted"
+        console.log("shuklaJi setting upvoted");
+        setUserVoteStatus("upvoted");
+    };
+
+    const handleDownvote = async () => {
+        const response = await fetch(
+            `http://localhost:9000/api/v1/votes/downvote/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json", // Set content type to JSON
+                },
+                body: JSON.stringify({ mail }), // Serialize the object to JSON
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log("Mail", mail);
+            console.error("Failed to downvote the question:", errorText);
+            return;
+        }
+        // Adjust downvote/upvote count based on user's previous voting status
+        console.log("userVoteStatus", userVoteStatus);
+        if (userVoteStatus === "upvoted") {
+            // If previously upvoted, subtract 2 for the new downvote
+            //setQuestion({ ...question, answers: [...question.answers, newAnswerObj] });
+            setQuestion({
+                ...question,
+                downvotes: question.downvotes + 1,
+                upvotes: question.upvotes - 1,
+            });
+            console.log("shuklaJi");
+            console.log(question.upvotes-question.downvotes);
+        } else if (userVoteStatus === "none") {
+            // If no previous vote, simply add 1
+            setQuestion({
+                ...question,
+                downvotes: question.downvotes + 1,
+            });
+        }
+
+        // Update user's voting status to "downvoted"
+        setUserVoteStatus("downvoted");
+    };
+
+    const handleAnswerUpvote = async (answerId) => {
+        const response = await fetch(
+            `http://localhost:9000/api/v1/votes/upvoteAnswer/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json", // Set content type to JSON
+                },
+                body: JSON.stringify({ mail, answerId }), // Serialize the object to JSON
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Failed to upvote the answer:", errorText);
+            return;
+        }
+
+        const updatedAnswers = question.answers.map((answer) =>
+            answer.id === answerId
+                ? { ...answer, upvotes: answer.upvotes + 1 }
+                : answer
+        );
+
         setQuestion({ ...question, answers: updatedAnswers });
     };
 
-    const handleAnswerDownvote = (id) => {
-        const updatedAnswers = question.answers.map(answer =>
-            answer.id === id ? { ...answer, votes: answer.votes - 1 } : answer
+    const handleAnswerDownvote = async (answerId) => {
+        const response = await fetch(
+            `http://localhost:9000/api/v1/votes/downvoteAnswer/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json", // Set content type to JSON
+                },
+                body: JSON.stringify({ mail, answerId }), // Serialize the object to JSON
+            }
         );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Failed to downvote the answer:", errorText);
+            return;
+        }
+
+        const updatedAnswers = question.answers.map((answer) =>
+            answer.id === answerId
+                ? { ...answer, downvotes: answer.downvotes + 1 }
+                : answer
+        );
+
         setQuestion({ ...question, answers: updatedAnswers });
     };
 
     const handleNewAnswer = async () => {
         if (!newAnswer.trim()) {
-            setError('Answer cannot be empty.');
+            setError("Answer cannot be empty.");
             return;
         }
- 
+
         const newAnswerObj = {
             content: newAnswer.trim(),
+            code: code.trim(),
             authorName: user,
             authorEmail: mail,
             upvotes: 0,
             downvotes: 0,
         };
-        console.log("mshukl",id);
-        console.log("newAnswerObj",newAnswerObj); 
-        const response = await fetch(`http://localhost:9000/api/v1/questions/answerQuestion/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json', // Set content type to JSON
-            },
-            body: JSON.stringify(newAnswerObj), // Serialize the object to JSON
-        });
-        
+        if (user == null) {
+            try {
+                //API call to fetch username corresponding to mail with the help of this api--- "http://localhost:8000/api/users/${mail}"
+                const response = await fetch(`http://localhost:8000/api/users/${mail}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch user data.");
+                }
+                const data = await response.json();
+                console.log("data", data);
+                newAnswerObj.authorName = data.username;
+            } catch (error) {
+                formData.append("authorName", "Anonymous");
+                console.log("Error fetching user data");
+            }
+        }
+        console.log("mshukl", id);
+        console.log("newAnswerObj", newAnswerObj);
+        const response = await fetch(
+            `http://localhost:9000/api/v1/questions/answerQuestion/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json", // Set content type to JSON
+                },
+                body: JSON.stringify(newAnswerObj), // Serialize the object to JSON
+            }
+        );
 
         if (!response.ok) {
-            throw new Error('Failed to submit the answer.');
+            throw new Error("Failed to submit the answer.");
         }
 
-
         setQuestion({ ...question, answers: [...question.answers, newAnswerObj] });
-        setNewAnswer('');
-        setError('');
+        setNewAnswer("");
+        setError("");
     };
 
     return (
-
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{question.title}</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                {question.title}
+            </h2>
             <div className="flex">
                 <div className="flex flex-col items-center mr-4">
-                    <button onClick={handleUpvote} className="text-gray-500 hover:text-gray-700">
+                    <button
+                        onClick={handleUpvote}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
                         <IconChevronUp size={24} />
                     </button>
-                    <span className="text-lg font-semibold text-gray-800">{question.votes}</span>
-                    <button onClick={handleDownvote} className="text-gray-500 hover:text-gray-700">
+                    <span className="text-lg font-semibold text-gray-800">
+                        {question.upvotes - question.downvotes}
+                    </span>
+                    <button
+                        onClick={handleDownvote}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
                         <IconChevronDown size={24} />
                     </button>
                 </div>
@@ -126,42 +268,69 @@ export default function StackOverflowQuestionView({params}) {
                             </span>
                         ))}
                     </div>
+                    <div className="text-right text-sm text-gray-500 flex  justify-end gap-3 items-center">
+                        <p>{question.authorName}</p>
+                        <QuestionTime createdAt={question.createdAt} />
+                    </div>
                 </div>
             </div>
 
             <div className="mt-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Answers</h3>
                 {question.answers.map((answer) => (
-                    <div key={answer._id} className="flex mb-6">
-                        <div className="flex flex-col items-center mr-4">
-                            <button onClick={() => handleAnswerUpvote(answer._id)} className="text-gray-500 hover:text-gray-700">
-                                <IconChevronUp size={24} />
-                            </button>
-                            <span className="text-lg font-semibold text-gray-800">{answer.upvotes + answer.downvotes}</span>
-                            <button onClick={() => handleAnswerDownvote(answer._id)} className="text-gray-500 hover:text-gray-700">
-                                <IconChevronDown size={24} />
-                            </button>
+                    <>
+                        <div key={answer._id} className="flex mb-6">
+                            <div className="flex flex-col items-center mr-4">
+                                <button
+                                    onClick={() => handleAnswerUpvote(answer._id)}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    <IconChevronUp size={24} />
+                                </button>
+                                <span className="text-lg font-semibold text-gray-800">
+                                    {answer.upvotes - answer.downvotes}
+                                </span>
+                                <button
+                                    onClick={() => handleAnswerDownvote(answer._id)}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    <IconChevronDown size={24} />
+                                </button>
+                            </div>
+                            <div>
+                                <p className="text-gray-700 mb-2">{answer.content}</p>
+                                {answer.code && (
+                                    <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto">
+                                        <code className="text-sm text-gray-800">{answer.code}</code>
+                                    </pre>
+                                )}
+                            </div>
                         </div>
-                        <div>
-                            {/* <p className="text-gray-700 mb-2">{answer.content}</p> */}
-                            {answer.content && (
-                                <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto">
-                                    <code className="text-sm text-gray-800">{answer.content}</code>
-                                </pre>
-                            )}
+                        <div className="text-right text-sm text-gray-500 flex  justify-end gap-3 items-center">
+                            <p>{answer.authorName}</p>
+                            <QuestionTime createdAt={answer.createdAt} />
                         </div>
-                    </div>
+                    </>
                 ))}
             </div>
 
             <div className="mt-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Answer</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Your Answer
+                </h3>
                 <textarea
                     value={newAnswer}
                     onChange={(e) => setNewAnswer(e.target.value)}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows="4"
                     placeholder="Enter your answer here..."
+                ></textarea>
+                <textarea
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="4"
+                    placeholder="Write your code here...(if any otherwise leave it blank)"
                 ></textarea>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
                 <button
@@ -174,5 +343,3 @@ export default function StackOverflowQuestionView({params}) {
         </div>
     );
 }
-
-
