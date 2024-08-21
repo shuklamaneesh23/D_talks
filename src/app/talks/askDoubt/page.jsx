@@ -10,8 +10,6 @@ function QuestionForm() {
 
     //user and mail from context
     const { user, mail } = useContext(UserContext);
-    console.log("user", user);
-    console.log("mail");
 
 
     const [title, setTitle] = useState('');

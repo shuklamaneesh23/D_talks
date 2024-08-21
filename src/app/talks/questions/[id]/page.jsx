@@ -8,8 +8,6 @@ export default function StackOverflowQuestionView({ params }) {
     const id = params.id;
 
     const { user, mail } = useContext(UserContext);
-    console.log("user", user);
-    console.log("mail", mail);
 
     const [question, setQuestion] = useState({
         title: "",
@@ -30,7 +28,6 @@ export default function StackOverflowQuestionView({ params }) {
                     throw new Error("Failed to fetch question.");
                 }
                 const data = await response.json();
-                console.log("data", data);
                 setQuestion(data);
             } catch (error) {
                 console.log("Error fetching question");
@@ -38,12 +35,13 @@ export default function StackOverflowQuestionView({ params }) {
         };
 
         getDetailedQuestion();
-    }, [id]);
+    }, [id, question.upvotes, question.downvotes, question.answers]);
 
     const [newAnswer, setNewAnswer] = useState("");
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
     const [userVoteStatus, setUserVoteStatus] = useState("none");
+    const [answerVoteStatus, setAnswerVoteStatus] = useState({});
 
     const handleUpvote = async () => {
         const response = await fetch(
@@ -72,7 +70,7 @@ export default function StackOverflowQuestionView({ params }) {
                 downvotes: question.downvotes - 1,
             });
             console.log("MshuklaJi");
-            console.log(question.upvotes-question.downvotes);
+            console.log(question.upvotes - question.downvotes);
         } else if (userVoteStatus === "none") {
             // If no previous vote, simply add 1
             setQuestion({
@@ -115,7 +113,7 @@ export default function StackOverflowQuestionView({ params }) {
                 upvotes: question.upvotes - 1,
             });
             console.log("shuklaJi");
-            console.log(question.upvotes-question.downvotes);
+            console.log(question.upvotes - question.downvotes);
         } else if (userVoteStatus === "none") {
             // If no previous vote, simply add 1
             setQuestion({
@@ -128,15 +126,17 @@ export default function StackOverflowQuestionView({ params }) {
         setUserVoteStatus("downvoted");
     };
 
+
     const handleAnswerUpvote = async (answerId) => {
+        // Make an API request to handle the upvote
         const response = await fetch(
             `http://localhost:9000/api/v1/votes/upvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json", // Set content type to JSON
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ mail, answerId }), // Serialize the object to JSON
+                body: JSON.stringify({ mail, answerId }),
             }
         );
 
@@ -146,24 +146,46 @@ export default function StackOverflowQuestionView({ params }) {
             return;
         }
 
-        const updatedAnswers = question.answers.map((answer) =>
-            answer.id === answerId
-                ? { ...answer, upvotes: answer.upvotes + 1 }
-                : answer
-        );
+        // Update the vote status based on previous voting state
+        const previousVoteStatus = answerVoteStatus[answerId] || "none";
+        const updatedAnswers = question.answers.map((answer) => {
+            if (answer.id === answerId) {
+                let updatedAnswer = { ...answer };
+
+                if (previousVoteStatus === "downvoted") {
+                    // If previously downvoted, add 2 for the new upvote
+                    updatedAnswer.upvotes = answer.upvotes + 1;
+                    updatedAnswer.downvotes = answer.downvotes - 1;
+                } else if (previousVoteStatus === "none") {
+                    // If no previous vote, simply add 1
+                    updatedAnswer.upvotes = answer.upvotes + 1;
+                }
+
+                return updatedAnswer;
+            }
+
+            return answer;
+        });
 
         setQuestion({ ...question, answers: updatedAnswers });
+
+        // Update user's voting status for this answer to "upvoted"
+        setAnswerVoteStatus({ ...answerVoteStatus, [answerId]: "upvoted" });
+
+        console.log("answerVoteStatus", answerVoteStatus);
     };
 
+
     const handleAnswerDownvote = async (answerId) => {
+        // Make an API request to handle the downvote
         const response = await fetch(
             `http://localhost:9000/api/v1/votes/downvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json", // Set content type to JSON
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ mail, answerId }), // Serialize the object to JSON
+                body: JSON.stringify({ mail, answerId }),
             }
         );
 
@@ -173,14 +195,33 @@ export default function StackOverflowQuestionView({ params }) {
             return;
         }
 
-        const updatedAnswers = question.answers.map((answer) =>
-            answer.id === answerId
-                ? { ...answer, downvotes: answer.downvotes + 1 }
-                : answer
-        );
+        // Update the vote status based on previous voting state
+        const previousVoteStatus = answerVoteStatus[answerId] || "none";
+        const updatedAnswers = question.answers.map((answer) => {
+            if (answer.id === answerId) {
+                let updatedAnswer = { ...answer };
+
+                if (previousVoteStatus === "upvoted") {
+                    // If previously upvoted, subtract 2 for the new downvote
+                    updatedAnswer.downvotes = answer.downvotes + 1;
+                    updatedAnswer.upvotes = answer.upvotes - 1;
+                } else if (previousVoteStatus === "none") {
+                    // If no previous vote, simply add 1
+                    updatedAnswer.downvotes = answer.downvotes + 1;
+                }
+
+                return updatedAnswer;
+            }
+
+            return answer;
+        });
 
         setQuestion({ ...question, answers: updatedAnswers });
+
+        // Update user's voting status for this answer to "downvoted"
+        setAnswerVoteStatus({ ...answerVoteStatus, [answerId]: "downvoted" });
     };
+
 
     const handleNewAnswer = async () => {
         if (!newAnswer.trim()) {
