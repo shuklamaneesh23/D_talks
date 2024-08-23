@@ -14,6 +14,13 @@ const UserContextProvider = ({ children }) => {
         return storedMail ? JSON.parse(storedMail) : null;
     });
 
+    const [uid, setUid] = React.useState(() => {
+        const storedUid = localStorage.getItem('uid');
+        return storedUid ? JSON.parse(storedUid) : null;
+    }
+    );
+
+
     // Effect to update localStorage when user or mail changes
     useEffect(() => {
         if (user !== null) {
@@ -31,6 +38,15 @@ const UserContextProvider = ({ children }) => {
         }
     }, [mail]);
 
+    useEffect(() => {
+        if (uid !== null) {
+            localStorage.setItem('uid', JSON.stringify(uid));
+        } else {
+            localStorage.removeItem('uid');
+        }
+    }, [uid]);
+
+
     // Update functions to change state and localStorage
     const updateUser = (newUser) => {
         setUser(newUser);
@@ -40,8 +56,13 @@ const UserContextProvider = ({ children }) => {
         setMail(newMail);
     };
 
+    const updateUid = (newUid) => {
+        setUid(newUid);
+    };
+
+
     return (
-        <UserContext.Provider value={{ user, setUser: updateUser, mail, setMail: updateMail }}>
+        <UserContext.Provider value={{ user, setUser: updateUser, mail, setMail: updateMail,uid, setUid: updateUid }}>
             {children}
         </UserContext.Provider>
     );

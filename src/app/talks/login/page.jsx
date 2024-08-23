@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import UserContext from "@/context/UserContext";
+import { add } from "date-fns";
 
 export default function RegisterLogin() {
     const [email, setEmail] = useState("");
@@ -19,13 +20,30 @@ export default function RegisterLogin() {
     const [message, setMessage] = useState(null);
    
 
-    const { setUser,setMail,user } = React.useContext(UserContext);
+    const { setUser,setMail,user,setUid } = React.useContext(UserContext);
 
     const router = useRouter();
 
 
     const [isOpen, setIsOpen] = useState(false);
     const [username, setUsername] = useState(null);
+
+    const addUser=async({email,auth,name})=>{
+        try {
+            console.log("Adding user");
+            console.log("name",name);
+            const res=await axios.post("http://localhost:9000/api/v1/users/addUser",{
+                email:email,
+                name:name,
+                uid:auth.currentUser.uid,
+                imageUri:auth.currentUser.photoURL,
+            });
+            console.log(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
 
     const handleSubmit = async (e) => {
@@ -36,16 +54,17 @@ export default function RegisterLogin() {
                 await createUserWithEmailAndPassword(auth, email, password);
                 setError("");
                 setMessage("Account created successfully. Please login");
+                //addUser({email,auth});
                 setIsOpen(true);
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
                 setError("");
                 setMessage("Logged in successfully");
-                
                 console.log("Logged in with email");
                 console.log("User", auth.currentUser.displayName);
-                setUser(auth.currentUser.displayName);
+                //setUser(auth.currentUser.displayName);
                 setMail(auth.currentUser.email);
+                setUid(auth.currentUser.uid);
                 //redirect to home page
                 router.push("/");
             }
@@ -58,13 +77,13 @@ export default function RegisterLogin() {
     const handleGoogleSignIn = async () => {
         try {
             await signInWithPopup(auth, googleProvider);
-
+            addUser({email:auth.currentUser.email,auth,name:auth.currentUser.displayName});
             console.log("Logged in with Google");
-
             //redirect to home page
             router.push("/");
             setUser(auth.currentUser.displayName);
             setMail(auth.currentUser.email);
+            setUid(auth.currentUser.uid);
             console.log(user);
         } catch (err) {
             setError(err.message);
@@ -79,6 +98,9 @@ export default function RegisterLogin() {
                 username:username
             });
             console.log(res.data);
+            console.log("username pasing to addUser",username);
+            addUser({email,auth,name:username});
+            setUser(username);
         } catch (error) {
             console.log(error);
         }
