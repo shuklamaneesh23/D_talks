@@ -316,6 +316,10 @@ export default function StackOverflowQuestionView({ params }) {
                 </div>
             </div>
 
+
+                        {/* code of answer */}
+
+
             <div className="mt-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Answers</h3>
                 {question.answers.map((answer) => (
@@ -381,6 +385,8 @@ export default function StackOverflowQuestionView({ params }) {
                     Submit Answer
                 </button>
             </div>
+
+            {/* send button end here */}
         </div>
     );
 }

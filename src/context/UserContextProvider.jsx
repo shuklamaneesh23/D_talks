@@ -20,6 +20,13 @@ const UserContextProvider = ({ children }) => {
     }
     );
 
+    const [chatId, setChatId] = React.useState(() => {
+        const storedChatId = localStorage.getItem('chatId');
+        return storedChatId ? JSON.parse(storedChatId) : null;
+    }
+    );
+
+
 
     // Effect to update localStorage when user or mail changes
     useEffect(() => {
@@ -46,6 +53,16 @@ const UserContextProvider = ({ children }) => {
         }
     }, [uid]);
 
+    useEffect(() => {
+        if (chatId !== null) {
+            localStorage.setItem('chatId', JSON.stringify(chatId));
+        } else {
+            localStorage.removeItem('chatId');
+        }
+    }
+    , [chatId]);
+
+
 
     // Update functions to change state and localStorage
     const updateUser = (newUser) => {
@@ -60,9 +77,14 @@ const UserContextProvider = ({ children }) => {
         setUid(newUid);
     };
 
+    const updateChatId = (newChatId) => {
+        setChatId(newChatId);
+    };
+
+
 
     return (
-        <UserContext.Provider value={{ user, setUser: updateUser, mail, setMail: updateMail,uid, setUid: updateUid }}>
+        <UserContext.Provider value={{ user, setUser: updateUser, mail, setMail: updateMail,uid, setUid: updateUid,chatId,setChatId:updateChatId }}>
             {children}
         </UserContext.Provider>
     );

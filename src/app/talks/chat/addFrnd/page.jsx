@@ -26,9 +26,9 @@ const UserListWithRequests = () => {
     useEffect(() => {
         // Replace with your API call
         fetchUsers();
-    }, [id]);
+    }, []);
 
-
+    
 
     const fetchUsers = async () => {
         try {
