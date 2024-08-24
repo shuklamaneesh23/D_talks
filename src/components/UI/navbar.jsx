@@ -46,8 +46,8 @@ export default function Navbar() {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
-            <Link href="/borrow">
-              <li>Ai Help</li>
+            <Link href="/talks/blog">
+              <li>Blogs</li>
             </Link>
             <li>
               <a>Learn</a>
@@ -60,10 +60,10 @@ export default function Navbar() {
                 </Link>
               </ul>
             </li>
-            <Link href="/lend">
+            <Link href="/talks/chat">
               <li>Chat</li>
             </Link>
-            <Link href="/lend">
+            <Link href="/talks/askDoubt">
               <li>Ask Doubt</li>
             </Link>
           </ul>
@@ -75,7 +75,7 @@ export default function Navbar() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <Link href="/borrow">Ai Help</Link>
+            <Link href="/talks/blog">Blogs</Link>
           </li>
           <li>
             <details>
@@ -85,13 +85,13 @@ export default function Navbar() {
                   <Link href="/#black">How to use?</Link>
                 </li>
                 <li>
-                  <Link href="">More features</Link>
+                  <Link href="/talks/allQuestion">Question Bank</Link>
                 </li>
               </ul>
             </details>
           </li>
           <li>
-            <Link href="/lend">Chat</Link>
+            <Link href="/talks/chat">Chat</Link>
           </li>
           <li>
             <Link href="/talks/askDoubt">Ask Doubt</Link>
