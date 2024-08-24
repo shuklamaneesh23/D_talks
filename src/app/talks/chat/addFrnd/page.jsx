@@ -83,6 +83,8 @@ const UserListWithRequests = () => {
     return (
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-4">Users</h2>
+            <div className="overflow-y-auto flex-grow max-h-[80vh] mb-16">
+
             <ul className="space-y-4">
                 {users.map((user) => (
                     <li
@@ -107,6 +109,7 @@ const UserListWithRequests = () => {
                     </li>
                 ))}
             </ul>
+            </div>
         </div>
     );
 };

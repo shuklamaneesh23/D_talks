@@ -89,10 +89,12 @@ const Layout = ({ children }) => {
     };
 
     return (
-        <div className="flex h-screen">
-            <div className="w-1/4 bg-gray-50 border-r">
+        <div className="flex h-[100vh]">
+            <div className="w-1/4 bg-gray-50 border-r max-h-[100vh]">
                 <div className="mt-8 p-4">
+                <Link href="/talks/chat">
                     <h3 className="font-bold text-xl">Overview</h3>
+                </Link>
                     <ul className="mt-2 space-y-2">
                         <Link href="/talks/chat/addFrnd">
                             <li className="flex items-center">
@@ -120,7 +122,7 @@ const Layout = ({ children }) => {
                                     />
                                 </span>
                                 <span className="text-lg font-semibold">Friend requests</span>
-                                <span className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-full">
+                                <span className="md:ml-2 bg-blue-500 text-white lg:px-3 lg:py-1 px-1 py-[1/4] rounded-full">
                                     {reqCount}
                                 </span>
                             </li>
@@ -136,7 +138,7 @@ const Layout = ({ children }) => {
                                     <Link href="#" key={frnd._id}>
                                         <div
                                             className="p-4 border rounded-md flex items-center cursor-pointer"
-                                            onClick={() => createChat(frnd._id)}
+                                            onClick={() => createChat(frnd.uid)}
                                         >
                                             <div className="flex-shrink-0">
                                                 <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">

@@ -109,7 +109,7 @@ const ChatWindow = () => {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-grow overflow-y-auto p-4">
+            <div className="flex-grow overflow-y-auto p-4 bg-green-500">
                 {messages.map((message) => (
                     <div
                         key={message._id}
@@ -129,7 +129,7 @@ const ChatWindow = () => {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 border-t flex items-center bg-white">
+            <div className="p-4 border-t flex items-center bg-white mb-16 z-20">
                 <input
                     type="text"
                     value={cont}
