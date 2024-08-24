@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
 import UserContext from "@/context/UserContext";
 import QuestionTime from "@/components/utils/timeCalculater";
+import Pusher from "pusher-js";
 
 export default function StackOverflowQuestionView({ params }) {
     const id = params.id;
@@ -18,24 +19,43 @@ export default function StackOverflowQuestionView({ params }) {
         answers: [],
     });
 
-    useEffect(() => {
-        const getDetailedQuestion = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost:9000/api/v1/questions/getQuestion/${id}`
-                );
-                if (!response.ok) {
-                    throw new Error("Failed to fetch question.");
-                }
-                const data = await response.json();
-                setQuestion(data);
-            } catch (error) {
-                console.log("Error fetching question");
+    const getDetailedQuestion = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:9000/api/v1/questions/getQuestion/${id}`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch question.");
             }
-        };
+            const data = await response.json();
+            console.log("dataManeesh", data);
+            setQuestion(data);
+        } catch (error) {
+            console.log("Error fetching question");
+        }
+    };
 
+    useEffect(() => {
         getDetailedQuestion();
-    }, [id, question.upvotes, question.downvotes, question.answers]);
+    }, [id]);
+    
+    useEffect(() => {
+        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+            cluster: "ap2",
+        });
+
+        const channel = pusher.subscribe(`questions-${id}`);
+        channel.bind('question-updated', (data) => {
+            getDetailedQuestion();
+        });
+
+        return () => {
+            channel.unbind_all();
+            pusher.unsubscribe(`questions-${id}`);
+        };
+    }, [id]);
+
+    
 
     const [newAnswer, setNewAnswer] = useState("");
     const [code, setCode] = useState("");
