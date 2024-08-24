@@ -5,12 +5,14 @@ import UserContext from "@/context/UserContext";
 import QuestionTime from "@/components/utils/timeCalculater";
 import Pusher from "pusher-js";
 import Image from "next/image";
+import { parseStream } from "@/lib/streaming";
 
 export default function StackOverflowQuestionView({ params }) {
     const id = params.id;
 
     const { user, mail } = useContext(UserContext);
-
+    const [explanation, setExplanation] = useState("");
+    const [loading, setLoading] = useState(false);
     const [question, setQuestion] = useState({
         title: "",
         content: "",
@@ -39,14 +41,14 @@ export default function StackOverflowQuestionView({ params }) {
     useEffect(() => {
         getDetailedQuestion();
     }, [id]);
-    
+
     useEffect(() => {
         const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
             cluster: "ap2",
         });
 
         const channel = pusher.subscribe(`questions-${id}`);
-        channel.bind('question-updated', (data) => {
+        channel.bind("question-updated", (data) => {
             getDetailedQuestion();
         });
 
@@ -56,7 +58,40 @@ export default function StackOverflowQuestionView({ params }) {
         };
     }, [id]);
 
-    
+    const generateSolution = async () => {
+        const sc = question.content;
+        const prompt = sc;
+
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await fetch("/api/generateSolution", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prompt }),
+            });
+
+            if (response.ok) {
+                // Handle the streaming data
+                parseStream(response, (chunk) => {
+                    let a = chunk.replace(/\\n/g, "\n"); // Log the chunk
+                    setExplanation(a); // Update explanation with new chunks
+                    setLoading(false);
+                });
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error || "An error occurred");
+            }
+        } catch (error) {
+            setError("An error occurred while fetching the data.");
+        } 
+        finally {
+            //setLoading(false);
+        }
+    };
 
     const [newAnswer, setNewAnswer] = useState("");
     const [code, setCode] = useState("");
@@ -147,7 +182,6 @@ export default function StackOverflowQuestionView({ params }) {
         setUserVoteStatus("downvoted");
     };
 
-
     const handleAnswerUpvote = async (answerId) => {
         // Make an API request to handle the upvote
         const response = await fetch(
@@ -196,7 +230,6 @@ export default function StackOverflowQuestionView({ params }) {
         console.log("answerVoteStatus", answerVoteStatus);
     };
 
-
     const handleAnswerDownvote = async (answerId) => {
         // Make an API request to handle the downvote
         const response = await fetch(
@@ -243,7 +276,6 @@ export default function StackOverflowQuestionView({ params }) {
         setAnswerVoteStatus({ ...answerVoteStatus, [answerId]: "downvoted" });
     };
 
-
     const handleNewAnswer = async () => {
         if (!newAnswer.trim()) {
             setError("Answer cannot be empty.");
@@ -273,8 +305,8 @@ export default function StackOverflowQuestionView({ params }) {
                 console.log("Error fetching user data");
             }
         }
-        console.log("mshukl", id);
-        console.log("newAnswerObj", newAnswerObj);
+        //console.log("mshukl", id);
+        //console.log("newAnswerObj", newAnswerObj);
         const response = await fetch(
             `http://localhost:9000/api/v1/questions/answerQuestion/${id}`,
             {
@@ -292,12 +324,13 @@ export default function StackOverflowQuestionView({ params }) {
 
         setQuestion({ ...question, answers: [...question.answers, newAnswerObj] });
         setNewAnswer("");
+        setCode("");
         setError("");
     };
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 pt-16">
                 {question.title}
             </h2>
             <div className="flex">
@@ -342,12 +375,24 @@ export default function StackOverflowQuestionView({ params }) {
                         height={300}
                         alt="Question Image"
                     />
+                    <button
+                        onClick={generateSolution}
+                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                    >
+                        {loading ? "Generating..." : "Get Ai Generated Answer"}
+                    </button>
+                    {explanation && (
+                        <div className="mt-4 w-full max-w-3xl p-4 rounded-lg shadow-md">
+                            <h2 className="text-xl font-semibold mb-2">Explanation:</h2>
+                            <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto">
+                                        <code className="text-sm text-gray-800">{explanation}</code>
+                                    </pre>
+                        </div>
+                    )}
                 </div>
             </div>
 
-
-                        {/* code of answer */}
-
+            {/* code of answer */}
 
             <div className="mt-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Answers</h3>
@@ -395,14 +440,14 @@ export default function StackOverflowQuestionView({ params }) {
                 <textarea
                     value={newAnswer}
                     onChange={(e) => setNewAnswer(e.target.value)}
-                    className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 mt-2 border bg-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows="4"
                     placeholder="Enter your answer here..."
                 ></textarea>
                 <textarea
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
-                    className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 mt-2 border bg-gray-50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows="4"
                     placeholder="Write your code here...(if any otherwise leave it blank)"
                 ></textarea>

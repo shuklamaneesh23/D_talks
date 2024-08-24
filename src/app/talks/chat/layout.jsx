@@ -162,12 +162,12 @@ const Layout = ({ children }) => {
                     </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 p-4 w-full">
+                <div className="absolute bottom-0 left-0 p-4 max-h-2xl">
                     <div className="flex items-center">
                         <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
                             {user[0].toUpperCase()}
                         </span>
-                        <div className="ml-4 overflow-hidden max-w-[120px] lg:max-w-[240px]">
+                        <div className="ml-4 overflow-hidden max-w-[120px] lg:max-w-[210px]">
                             <p className="font-bold">{user}</p>
                             <p className="text-sm text-gray-500 overflow-hidden">{mail}</p>
                         </div>

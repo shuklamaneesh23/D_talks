@@ -163,7 +163,7 @@ function QuestionForm() {
                             {tags.map((tag, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center px-2 py-1 text-sm  bg-gray-700 rounded-full"
+                                    className="flex items-center px-2 py-1 text-sm  bg-gray-700 text-white rounded-full"
                                 >
                                     {tag}
                                     <button
