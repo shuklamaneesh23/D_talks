@@ -14,7 +14,7 @@ export default function StepsCard({
     bcolor,
 }) {
     return (
-        <div className="flex flex-col justify-center items-center bg-slate-200 pb-4 pt-20 md:pt-40">
+        <div className="flex flex-col justify-center items-center bg-slate-200 pb-4 ">
            
             
             <div

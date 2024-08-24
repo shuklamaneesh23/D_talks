@@ -23,7 +23,7 @@ export default function Navbar() {
 
 
   return (
-    <div className="navbar w-[96%] bg-white fixed z-20 text-black rounded-2xl m-[2%]">
+    <div className="navbar w-[96%] bg-slate-500 fixed z-20 text-black rounded-2xl m-[2%]">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">

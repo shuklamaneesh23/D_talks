@@ -4,6 +4,7 @@ import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
 import UserContext from "@/context/UserContext";
 import QuestionTime from "@/components/utils/timeCalculater";
 import Pusher from "pusher-js";
+import Image from "next/image";
 
 export default function StackOverflowQuestionView({ params }) {
     const id = params.id;
@@ -333,6 +334,14 @@ export default function StackOverflowQuestionView({ params }) {
                         <p>{question.authorName}</p>
                         <QuestionTime createdAt={question.createdAt} />
                     </div>
+                    {/* image of the question */}
+                    <Image
+                        src={question.image}
+                        className="w-full h-auto object-cover mt-4"
+                        width={500}
+                        height={300}
+                        alt="Question Image"
+                    />
                 </div>
             </div>
 

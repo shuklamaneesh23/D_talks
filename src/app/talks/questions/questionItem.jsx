@@ -4,7 +4,7 @@ import Link from "next/link";
 
 function QuestionItem({ question }) {
     return (
-        <div className="border-b border-gray-300 py-4 bg-white">
+        <div className="border-b border-gray-300 py-4 bg-slate-100">
             <div className="flex justify-between">
                 <div className="md:flex md:flex-row flex-col space-x-4">
                     <div className="text-center text-black flex md:flex-col md:justify-center pl-4 md:pl-0 justify-start gap-6 md:gap-0">

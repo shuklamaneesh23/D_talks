@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { useEffect } from 'react';
-import QuestionItem from './questionItem';
+import QuestionItem from '../questions/questionItem';
 
 
 function QuestionsList() {
@@ -33,9 +33,9 @@ function QuestionsList() {
 
 
     return (
-        <div className="max-w-screen mx-auto p-6 mt-12 bg-slate-100  shadow-md ">
-        <h1 className="md:text-5xl text-3xl font-bold from-neutral-500 font-serif text-center mb-6">Recent Doubts</h1>
-            {questions.slice(0,5).map((question, index) => (
+        <div className="max-w-screen mx-auto p-6 bg-slate-100  shadow-md ">
+        <h1 className="md:text-5xl text-3xl font-bold from-neutral-500 font-serif text-center mb-6">Question Bank</h1>
+            {questions.map((question, index) => (
                 <QuestionItem key={index} question={question} />
             ))}
         </div>

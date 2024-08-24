@@ -121,7 +121,7 @@ export default function RegisterLogin() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 mt-2 border text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 mt-2 border text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
@@ -133,7 +133,7 @@ export default function RegisterLogin() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-2 border text-white  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 mt-2 border text-black bg-white  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
@@ -179,7 +179,7 @@ export default function RegisterLogin() {
              {/* Overlay */}
              {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                    className="fixed inset-0 bg-black bg-opacity-90 z-40"
                     onClick={() => setIsOpen(false)}
                 ></div>
             )}
@@ -187,7 +187,7 @@ export default function RegisterLogin() {
             {/* Dialog Box */}
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
-                    <div className="bg-gray-800 text-white rounded-lg p-6 w-full max-w-sm mx-auto shadow-lg">
+                    <div className="bg-white text-black rounded-lg p-6 w-full max-w-sm mx-auto shadow-lg">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">Choose username</h2>
                             
