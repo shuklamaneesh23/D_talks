@@ -1,25 +1,42 @@
 "use client";
-import React, { useContext,useState,useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Image from "next/image";
 import UserContext from "@/context/UserContext";
 import axios from "axios";
+import { set } from "mongoose";
+import Link from "next/link";
+import { auth } from "@/lib/firebase";  // Correctly import auth
+import { signOut } from "firebase/auth";
+
+
 
 function UserDashboard() {
 
-  const { uid,mail } =useContext(UserContext);
-  const id=uid;
+  const { setMail,setUid,setChatId } = useContext(UserContext);
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("Logged out");
+        setMail(null);
+        setUid(null);
+        setChatId(null);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  };
+
+  const { uid, mail } = useContext(UserContext);
+  const id = uid;
 
   const [user, setUser] = useState({});
   const [reputation, setReputation] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
-  const fetchUser = async () => {
-    const response = await fetch(`http://localhost:9000/api/v1/users/getUserEmailById/${id}`);
-    const data = await response.json();
-    console.log("dataM",data);
-    setUser(data);
-  }
 
   const getUserReputation = async () => {
     try {
@@ -30,7 +47,7 @@ function UserDashboard() {
           'Content-Type': 'application/json'
         }
       });
-  
+
       // Axios automatically parses the JSON response
       const data = response.data;
       setReputation(data);
@@ -38,7 +55,7 @@ function UserDashboard() {
       console.error("Error fetching reputation:", error);
     }
   }
-  
+
   const questionsAsked = async () => {
     try {
       const response = await axios.post("http://localhost:9000/api/v1/votes/getQuestionsAskedByUser", {
@@ -71,13 +88,36 @@ function UserDashboard() {
     }
   }
 
+
+  const blogsWritten = async () => {
+    try {
+      const response = await axios.post("http://localhost:9000/api/v1/blogs/getBlogsByAuthor", {
+        authorId: id
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = response.data;
+      setBlogs(data);
+      setUser(data[0].authorName);
+    }
+    catch (error) {
+      console.error("Error fetching blogs:", error);
+    }
+
+  }
+
+
+
+
   useEffect(() => {
-    fetchUser();
     getUserReputation();
     questionsAsked();
     answersGiven();
+    blogsWritten();
   }
-  , [id]);
+    , [id]);
 
 
 
@@ -108,8 +148,9 @@ function UserDashboard() {
               <p className="text-gray-600">{user.email}</p>
             </div>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            New Post
+          <button onClick={handleSignOut}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Sign Out
           </button>
         </div>
       </header>
@@ -117,10 +158,10 @@ function UserDashboard() {
       {/* Main Content */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Stats Card */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-12 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Your Stats</h2>
           <div className="space-y-4">
-          <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="text-gray-600">Reputation</span>
               <span className="text-2xl font-bold">{reputation}</span>
             </div>
@@ -141,15 +182,17 @@ function UserDashboard() {
 
         {/* Recent Activities */}
         <div className="bg-white p-6 rounded-lg shadow-md md:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
-          <ul className="space-y-4">
-            {questions.map((question) => (
-              <li key={question.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold">{question.title}</h3>
+          <h2 className="text-xl font-semibold mb-4">Recent Blogs</h2>
+          <ul className="space-y-4 flex flex-col gap-3">
+            {blogs.slice(0,3).map((blog) => (
+              <Link href={`/talks/blog/${blog._id}`} key={blog._id}>
+              <li key={blog._id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold">{blog.title}</h3>
                 <p className="text-gray-500 text-sm">
-                  Posted on {new Date(question.createdAt).toLocaleDateString()}
+                  Posted on {new Date(blog.date).toLocaleDateString()}
                 </p>
               </li>
+              </Link>
             ))}
           </ul>
         </div>
@@ -157,19 +200,23 @@ function UserDashboard() {
 
       {/* User Bio */}
       <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Questions Asked</h2>
-        <ul className="space-y-4">
-            {answers.map((question) => (
-              <li key={question.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold">{question.title}</h3>
-                <p className="text-gray-500 text-sm">
-                  Posted on {new Date(question.createdAt).toLocaleDateString()}
-                </p>
-              </li>
-            ))}
+        <h2 className="text-2xl font-semibold mb-4">Your Answers</h2>
+        <ul className="space-y-4 flex flex-col gap-3">
+        
+          {answers.slice(0,5).map((question) => (
+            <Link href={`/talks/questions/${question._id}`} key={question._id}>
+            <li key={question.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold">{question.title}</h3>
+              <p className="text-gray-500 text-sm">
+                Posted on {new Date(question.createdAt).toLocaleDateString()}
+              </p>
+            </li>
+            </Link>
+          ))}
+          
 
-          </ul>
-      
+        </ul>
+
       </div>
     </div>
   );

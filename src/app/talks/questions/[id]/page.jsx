@@ -60,7 +60,7 @@ export default function StackOverflowQuestionView({ params }) {
 
     const generateSolution = async () => {
         const sc = question.content;
-        const prompt = sc;
+        const prompt = sc + "   \n Address the given issue and explain the solution.";
 
         setLoading(true);
         setError("");
@@ -77,7 +77,8 @@ export default function StackOverflowQuestionView({ params }) {
             if (response.ok) {
                 // Handle the streaming data
                 parseStream(response, (chunk) => {
-                    let a = chunk.replace(/\\n/g, "\n"); // Log the chunk
+                    let a = chunk.replace(/\\n/g, "\n");
+                    //console.log(a); // Log the chunk
                     setExplanation(a); // Update explanation with new chunks
                     setLoading(false);
                 });

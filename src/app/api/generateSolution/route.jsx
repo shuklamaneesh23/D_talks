@@ -11,7 +11,7 @@ export async function POST(req) {
         const geminiStream = await genAI
             .getGenerativeModel({ model: "gemini-pro" })
             .generateContentStream(
-                prompt + "   \n Address the given issue and explain the solution."
+                prompt 
             );
 
         // Convert the response into a friendly text-stream

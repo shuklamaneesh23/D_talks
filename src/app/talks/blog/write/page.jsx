@@ -1,14 +1,19 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the Quill CSS
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import UserContext from '@/context/UserContext';
 
 const CreateBlogPost = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [tag, setTag] = useState(''); // New state for tags
+    const {uid}=useContext(UserContext);
+    const id=uid;
+    console.log(id);
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
@@ -19,14 +24,24 @@ const CreateBlogPost = () => {
     };
 
     const handleSubmit = async(e) => {
+
         e.preventDefault();
         if (!title || !description || !tag) {
             alert('Please fill in all fields');
             return;
         }
+        toast.info('Posting your blog post...', {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 1,
+            theme: "colored",
+            });
 
-        // Handle the form submission and send a POST request with the form data, including tags
-
+        //form data for sending req with photo since axios does not support direct image..if we want we have to send it in base64 format
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
@@ -34,11 +49,12 @@ const CreateBlogPost = () => {
         if(image) {
             formData.append('image', image);
         }
-
-
+        formData.append('authorName', id);
         try{
             //print form data
-            console.log(formData.get('title'));
+            console.log(formData.get('authorName'));
+            //data type of authorName
+            console.log(typeof(formData.get('authorName')));
             const response = await axios.post('http://localhost:9000/api/v1/blogs', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -46,10 +62,28 @@ const CreateBlogPost = () => {
             }
         );
             console.log(response);
-        }
+            toast.success('🦄 Posted Successfully!', {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: 1,
+                theme: "colored",
+                });       
+
+            //redirect to home page
+            window.location.href = '/';
+
+            
+            }
+
+
         catch(err){
             console.log("mane");
             console.log(err);
+            toast.error('Failed to create blog post');
         }
 
         //console.log({ title, description, image, tags });

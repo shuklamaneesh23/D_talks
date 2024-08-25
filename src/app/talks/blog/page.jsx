@@ -1,14 +1,17 @@
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import formatDate from "@/components/utils/formatDate";
 
 function truncateText(text, maxWords) {
     const words = text.split(" ");
     if (words.length > maxWords) {
-        return words.slice(0, maxWords).join(" ") + "...";
+        return words.slice(1, maxWords).join(" ") + "...";
     }
     return text;
 }
+
+
 
 export default async function Home() {
     const res = await axios.get('http://localhost:9000/api/v1/blogs');
@@ -61,12 +64,12 @@ export default async function Home() {
                         />
                         <div className="flex flex-col justify-between mt-16 mb-16">
                             <div>
-                                <span className="block font-mono font-semibold text-xl text-slate-800 mb-8">
-                                    {firstPost.tag} | {firstPost.date}
+                                <span className="block font-mono font-semibold text-2xl text-slate-800 mb-8">
+                                    {firstPost.tag} | {formatDate(firstPost.date)}
                                 </span>
                                 <h2 className="text-4xl font-semibold">{firstPost.title}</h2>
                                 <p className="text-xl text-gray-400">
-                                    {truncateText(firstPost.description, 40)}
+                                    {truncateText(firstPost.description, 20)}
                                 </p>
                             </div>
                             <Link href={`/talks/blog/${firstPost._id}`}>
@@ -101,7 +104,7 @@ export default async function Home() {
                                 />
                                 <div className="space-y-2">
                                     <span className="block text-sm text-slate-800">
-                                        Technology | {post.date}
+                                        {post.tag} | {formatDate(post.date)}
                                     </span>
                                     <h2 className="text-2xl font-semibold">{post.title}</h2>
                                     <p className="text-gray-400">{truncateText(post.description, 20)}</p>
@@ -116,7 +119,6 @@ export default async function Home() {
                     ))}
                 </div>
             </main>
-
         </div>
     );
 }
