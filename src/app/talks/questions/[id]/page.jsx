@@ -384,7 +384,7 @@ export default function StackOverflowQuestionView({ params }) {
                     {explanation && (
                         <div className="mt-4 w-full max-w-3xl p-4 rounded-lg shadow-md">
                             <h2 className="text-xl font-semibold mb-2">Explanation:</h2>
-                            <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto">
+                            <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto whitespace-pre-wrap">
                                         <code className="text-sm text-gray-800">{explanation}</code>
                                     </pre>
                         </div>

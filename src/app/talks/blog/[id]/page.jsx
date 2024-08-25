@@ -25,10 +25,10 @@ export default async function Home({ params }) {
     const posts = allPosts.filter(post => post._id !== mainPost._id).slice(0, 3);
 
     return (
-        <div className="min-h-screen bg-black text-white">
+        <div className="min-h-screen bg-slate-200 text-white">
             <main className="px-5 py-10">
                 {mainPost && (
-                    <div className="bg-black p-5 rounded-lg mb-10">
+                    <div className="bg-slate-200 p-5 rounded-lg mb-10">
                         <Image
                             src={mainPost.image}
                             alt="Blog main image"
@@ -38,62 +38,16 @@ export default async function Home({ params }) {
                         />
 
                         <div className="md:p-12 ml-4 mr-4 md:ml-28 md:mr-28">
-                            <span className="block text-xl text-orange-500 mb-8">
+                            <span className="block text-xl text-slate-800 mb-8">
                                 Technology | {mainPost.date}
                             </span>
-                            <h1 className="text-4xl font-bold mb-4">
+                            <h1 className="text-4xl text-black font-bold mb-4">
                                 {mainPost.title}
                             </h1>
-                            <p className="mb-4">
-                                Lorem ipsum dolor sit amet consectetur. Adipiscing iaculis mattis
-                                convallis ipsum sit nisi donec. Fusce semper feugiat augue sapien
-                                volutpat dolor ultrices elementum non. Non in faucibus at etiam
-                                ipsum felis. Tellus amet pellentesque eu metus eget nisl eget
-                                vitae vulputate.
-                            </p>
-                            <p className="mb-4">
-                                Lorem ipsum dolor sit amet consectetur. Vulputate odio purus lorem
-                                nec faucibus. Nunc nulla vitae orci ipsum sollicitudin nibh nullam
-                                ipsum. Blandit sed tortor nec nulla diam morbi. Sit commodo eu a
-                                nulla a urna cras.
-                            </p>
-                            <ul className="list-disc pl-5 mb-4">
-                                <li>
-                                    Lorem ipsum dolor sit amet consectetur. Non diam bibendum risus
-                                    egestas adipiscing.
-                                </li>
-                                <li>Metus quis sed semper in eu pulvinar sapien habitant.</li>
-                                <li>In curabitur nulla amet bibendum.</li>
-                            </ul>
-                            <div className="bg-orange-500 text-black p-4 rounded mb-4">
-                                <p>
-                                    Lorem ipsum dolor sit amet consectetur. Eget nunc feugiat morbi
-                                    nunc. Trincidunt et feugiat sed aliquam in phasellus sed.
-                                    Curabitur id luctus neque dolor aliquet et et. Odio vitae nibh
-                                    tristique magna interdum quam. Non leo mi adipiscing congue
-                                    scelerisque elit. Suspendisse lacinia phasellus lacus aenean.
-                                </p>
-                            </div>
-                            <p className="mb-4">
-                                Lorem ipsum dolor sit amet consectetur. Elit sagittis pulvinar
-                                ullamcorper sit arcu tincidunt curabitur in. Maecenas egestas ac
-                                sed eget sit cursus maecenas elit velit. Diam fermentum sodales
-                                sed sociis tortor ac at.
-                            </p>
-                            <ol className="list-decimal pl-5 mb-4">
-                                <li>
-                                    It brings the right people together with the right information
-                                    and tools to get work done
-                                </li>
-                                <li>
-                                    Lorem ipsum dolor sit amet consectetur. Non diam bibendum risus
-                                    egestas adipiscing.
-                                </li>
-                                <li>
-                                    Lorem ipsum dolor sit amet consectetur. Non diam bibendum risus
-                                    egestas adipiscing.er
-                                </li>
-                            </ol>
+                            <pre className="text-gray-600 whitespace-pre-wrap">
+                                {mainPost.description}
+                            </pre>
+
                         </div>
                     </div>
                 )}
@@ -102,7 +56,7 @@ export default async function Home({ params }) {
 
                 <div className="flex justify-between p-4">
                     <div>
-                        <h2 className="text-3xl font-bold mb-4">Related News</h2>
+                        <h2 className="text-3xl text-red-600 font-bold mb-4">Related News</h2>
                     </div>
                     <div>
                         <Link href="/talks/blog">
@@ -114,28 +68,35 @@ export default async function Home({ params }) {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts && posts.map((post, index) => (
-                        <div key={index} className="bg-black p-5 rounded-lg">
-                            <Image
-                                src={post.image}
-                                alt="Blog image"
-                                width={400} // Set the width as needed
-                                height={300} // Set the height as needed
-                                className="w-full h-58 object-cover rounded-md mb-4"
-                            />
-                            <div className="space-y-2">
-                                <span className="block text-sm text-orange-500">
-                                    Technology | {post.date}
-                                </span>
-                                <h2 className="text-2xl font-semibold">{post.title}</h2>
-                                <p className="text-gray-400">{truncateText(post.description, 20)}</p>
-                                <Link href={`/talks/blog/${post._id}`}>
-                                    <span className="text-orange-500 hover:underline">
-                                        Read More
+                        <div key={index} className="relative p-5 rounded-lg">
+                            {/* Background layer */}
+                            <div className="absolute inset-0 bg-white bg-opacity-30 backdrop-blur-md rounded-md"></div>
+
+                            {/* Content layer */}
+                            <div className="relative z-10">
+                                <Image
+                                    src={post.image}
+                                    alt="Blog image"
+                                    width={400} // Set the width as needed
+                                    height={300} // Set the height as needed
+                                    className="w-full h-58 object-cover rounded-md mb-4"
+                                />
+                                <div className="space-y-2">
+                                    <span className="block text-sm text-slate-800">
+                                        Technology | {post.date}
                                     </span>
-                                </Link>
+                                    <h2 className="text-2xl text-black font-semibold">{post.title}</h2>
+                                    <p className="text-gray-400">{truncateText(post.description, 20)}</p>
+                                    <Link href={`/talks/blog/${post._id}`}>
+                                        <span className="text-blue-500 hover:underline">
+                                            Read More
+                                        </span>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     ))}
+
                 </div>
             </main>
         </div>
