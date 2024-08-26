@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
 import UserContext from "@/context/UserContext";
-import { set } from "mongoose";
 import axios from "axios";
 
 const UserListWithRequests = () => {
@@ -88,11 +87,11 @@ const UserListWithRequests = () => {
             <ul className="space-y-4">
                 {users.map((user) => (
                     <li
-                        key={user._id}
+                        key={user.uid}
                         className="flex items-center justify-between p-4 border rounded-lg"
                     >
                         <div className="flex items-center">
-                            <span className="block w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
+                            <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
                                 {user.email[0].toUpperCase()}
                             </span>
                             <div className="ml-4">
