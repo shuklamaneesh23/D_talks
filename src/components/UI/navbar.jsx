@@ -2,25 +2,30 @@
 import Link from "next/link";
 import React from "react";
 import UserContext from "@/context/UserContext";
-import { auth } from "@/lib/firebase";  // Correctly import auth
+import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { setMail,mail } = React.useContext(UserContext);
+  const { setMail, mail } = React.useContext(UserContext);
   const router = useRouter();
- 
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
         console.log("Logged out");
         setMail(null);
+
+        // Clear localStorage manually
+        localStorage.removeItem('mail');
+        localStorage.removeItem('uid');
+        localStorage.removeItem('chatId');
+        localStorage.removeItem('user');
       })
       .catch((error) => {
         console.log("Error", error);
       });
   };
-
 
   return (
     <div className="navbar w-[96%] bg-slate-500 fixed z-20 text-black rounded-2xl m-[2%]">
@@ -47,27 +52,27 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-slate-200 rounded-box w-52"
           >
             <Link href="/talks/blog">
-              <li>Blogs</li>
+              <li className={mail ? "" : "disabled pointer-events-none opacity-50"}>Blogs</li>
             </Link>
             <li>
-              <a>Learn</a>
+              <a className={mail ? "" : "disabled pointer-events-none opacity-50"}>Learn</a>
               <ul className="p-2 bg-slate-200">
                 <Link href="/#black">
                   <li>How to use?</li>
                 </Link>
-                <Link href="">
-                  <li>Features</li>
+                <Link href="/talks/allQuestion">
+                  <li>Question Bank</li>
                 </Link>
               </ul>
             </li>
             <Link href="/talks/chat">
-              <li>Chat</li>
+              <li className={mail ? "" : "disabled pointer-events-none opacity-50"}>Chat</li>
             </Link>
             <Link href="/talks/askDoubt">
-              <li>Ask Doubt</li>
+              <li className={mail ? "" : "disabled pointer-events-none opacity-50"}>Ask Doubt</li>
             </Link>
             <Link href="/talks/dashboard">
-              <li>DashBoard</li>
+              <li className={mail ? "" : "disabled pointer-events-none opacity-50"}>DashBoard</li>
             </Link>
           </ul>
         </div>
@@ -77,11 +82,11 @@ export default function Navbar() {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
+          <li className={mail ? "" : " pointer-events-none text-slate-800"}>
             <Link href="/talks/blog">Blogs</Link>
           </li>
           <li>
-            <details>
+            <details >
               <summary>Learn</summary>
               <ul className="p-2 bg-white">
                 <li>
@@ -93,17 +98,15 @@ export default function Navbar() {
               </ul>
             </details>
           </li>
-          <li>
-            <Link href="/talks/chat">Chat</Link>
+          <li className={mail ? "" : " pointer-events-none text-slate-800"}>
+                      <Link href="/talks/chat">Chat</Link>
           </li>
-          <li>
-            <Link href="/talks/askDoubt">Ask Doubt</Link>
+          <li className={mail ? "" : " pointer-events-none text-slate-800"}>
+                      <Link href="/talks/askDoubt">Ask Doubt</Link>
           </li>
-          <li>
-          <Link href="/talks/dashboard">
-              DashBoard
-            </Link>
-            </li>
+          <li className={mail ? "" : " pointer-events-none text-slate-800"}>
+                      <Link href="/talks/dashboard">DashBoard</Link>
+          </li>
         </ul>
       </div>
       {/* login button here */}

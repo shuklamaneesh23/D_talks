@@ -158,7 +158,7 @@ const ChatWindow = () => {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 border-t flex items-center bg-white mb-16 z-20">
+            <div className="p-4 border-t flex items-center bg-white mb-8 z-20">
                 <input
                     type="text"
                     value={cont}

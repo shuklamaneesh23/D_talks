@@ -4,10 +4,10 @@ import UserContext from '@/context/UserContext';
 import { useContext } from 'react';
 
 function Footer() {
-    const { user } = useContext(UserContext);
+    const { user, mail } = useContext(UserContext);
 
     return (
-        <footer className="footer p-10 bg-gray-600 text-white">
+        <footer className={`footer p-10 bg-gray-600 text-white ${!mail ? 'pointer-events-none' : ''}`}>
             <nav>
                 <Link href="/" ><h6 className="footer-title">D-Talks</h6></Link>
                 <Link href="/talks/allQuestions" className="link link-hover">Questions</Link>
@@ -40,7 +40,6 @@ function Footer() {
                     </a>
                 </div>
             </nav>
-            
         </footer>
     );
 }

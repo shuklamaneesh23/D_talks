@@ -16,17 +16,27 @@ function UserDashboard() {
 
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {
-        console.log("Logged out");
-        setMail(null);
-        setUid(null);
-        setChatId(null);
-        window.location.href = "/";
-      })
-      .catch((error) => {
-        console.log("Error", error);
-      });
-  };
+        .then(() => {
+            console.log("Logged out");
+
+            // Clear the state
+            setMail(null);
+            setUid(null);
+            setChatId(null);
+
+            // Clear localStorage manually
+            localStorage.removeItem('mail');
+            localStorage.removeItem('uid');
+            localStorage.removeItem('chatId');
+            localStorage.removeItem('user');
+            // Redirect the user
+            window.location.href = "/";
+        })
+        .catch((error) => {
+            console.log("Error", error);
+        });
+};
+
 
   const { uid, mail } = useContext(UserContext);
   const id = uid;

@@ -174,7 +174,7 @@ const Layout = ({ children }) => {
                     </div>
                 </div>
             </div>
-            <aside className="max-h-screen  py-16 w-full">{children}</aside>
+            <aside className="max-h-screen sticky py-8 w-full">{children}</aside>
         </div>
     );
 };
