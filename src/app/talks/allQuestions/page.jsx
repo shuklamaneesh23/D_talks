@@ -1,14 +1,16 @@
 "use client";
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect ,useState} from 'react';
 import QuestionItem from '../questions/questionItem';
+import SearchBar from '@/components/utils/searchBar';
 
 
 function QuestionsList() {
 
+    const [questions, setQuestions] = useState([]);
+    const [filteredQuestions, setFilteredQuestions] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const [questions, setQuestions] = React.useState([]);
-    //write a function to fetch questions from the backend using this api "http://localhost:9000/api/v1/questions/allQuestions" --> use useEffect to call the function
     const fetchQuestions = async () => {
         try {
             const response = await fetch('http://localhost:9000/api/v1/questions/allQuestions');
@@ -18,15 +20,30 @@ function QuestionsList() {
             const data = await response.json();
             console.log("data", data);
             setQuestions(data);
-        }
-        catch (error) {
+            setFilteredQuestions(data); // Initialize filteredQuestions
+        } catch (error) {
             console.log("Error fetching questions");
         }
-    }
+    };
 
     useEffect(() => {
         fetchQuestions();
     }, []);
+
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        if (query) {
+            const lowercasedQuery = query.toLowerCase();
+            const filtered = questions.filter(question =>
+                question.title.toLowerCase().includes(lowercasedQuery) ||
+                question.content.toLowerCase().includes(lowercasedQuery)
+            );
+            setFilteredQuestions(filtered);
+        } else {
+            setFilteredQuestions(questions);
+        }
+    };
 
 
 
@@ -35,7 +52,8 @@ function QuestionsList() {
     return (
         <div className="max-w-screen mx-auto p-6 bg-slate-100  shadow-md ">
         <h1 className="md:text-5xl text-3xl font-bold from-neutral-500 font-serif text-center mb-6">Question Bank</h1>
-            {questions.map((question, index) => (
+        <SearchBar onSearch={handleSearch} /> {/* Add the SearchBar component */}
+            {filteredQuestions.map((question, index) => (
                 <QuestionItem key={index} question={question} />
             ))}
         </div>

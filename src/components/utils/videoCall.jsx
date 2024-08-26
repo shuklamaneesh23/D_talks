@@ -60,9 +60,10 @@ const VideoCall = () => {
     }, [peer?.stream]);
 
     return (
-        <div className="relative flex flex-col bg-slate-100 gap-9 items-center">
-            <div>
+        <div className="relative flex flex-col bg-slate-100 gap-9 min-h-screen items-center">
+            <div className="flex gap-2 max-w-screen">
                 {/* Display local stream */}
+                <div className="w-1/2">
                 {localStream && (
                     <VideoContainer
                         stream={localStream}
@@ -70,7 +71,9 @@ const VideoCall = () => {
                         isOnCall={true}
                     />
                 )}
+                </div>
                 {/* Display remote stream */}
+                <div className="w-1/2">
                 {peer?.stream && (
                     <VideoContainer
                         stream={peer.stream}
@@ -78,6 +81,7 @@ const VideoCall = () => {
                         isOnCall={true}
                     />
                 )}
+                </div>
             </div>
             {/* Control buttons */}
             {localStream && (

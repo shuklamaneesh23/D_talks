@@ -122,73 +122,100 @@ const UserContextProvider = ({ children }) => {
             },
         ];
 
-        const newPeer = new Peer({
+        const peer = new Peer({
             initiator,
             trickle: true,
             stream,
             config: { iceServers }
         });
 
-        newPeer.on('stream', (remoteStream) => {
-            console.log('Received remote stream:', remoteStream);
-            setPeer((prevPeer) => ({
-                ...prevPeer,
-                stream: remoteStream
-            }));
+        peer.on('stream',(stream)=>{
+            setPeer((prevPeer)=>{
+                if(prevPeer){
+                    return {...prevPeer,stream}
+                }
+                return prevPeer;
+            })
         });
 
-        newPeer.on('signal', (data) => {
-            console.log('Peer signal data:', data);
-            socket.emit('webrtcSignal', {
-                sdp: data,
-                ongoingCall,
-                isCaller: initiator
-            });
-        });
+        peer.on('error',console.error);
+        peer.on('close',()=> handleHangup({}));
 
-        newPeer.on('error', console.error);
-        newPeer.on('close', () => handleHangup({}));
+        const rtcPeerCoonection=(peer)._pc;
 
-        return newPeer;
-    }, [handleHangup, socket, ongoingCall]);
+        rtcPeerCoonection.oniceconnectionstatechange=async()=>{
+            if(rtcPeerCoonection.iceConnectionState==='disconnected' || rtcPeerCoonection.iceConnectionState==='failed'){
+                handleHangup({});
+            }
+        }
 
-    const completePeerConnection = useCallback(async (connectionData) => {
-        if (!localStream) {
+        return peer;
+    }, [ongoingCall,setPeer]);
+
+    const completePeerConnection=useCallback(async(connectionData)=>{
+
+        if(!localStream){
             console.error("No local stream in complete peer connection");
             return;
         }
 
-        if (peer) {
-            peer.signal(connectionData.sdp);
+        if(peer){
+            peer.peerConnection.signal(connectionData.sdp);
             return;
         }
 
-        const newPeer = createPeer(localStream, true);
+        const newPeer=createPeer(localStream,true);
         setPeer({
-            peerConnection: newPeer,
-            participantUser: connectionData.ongoingCall.participants.receiver,
-            stream: undefined
+            peerConnection:newPeer,
+            participantUser:connectionData.ongoingCall.participants.receiver,
+            stream:undefined
+        })
+
+        newPeer.on('signal',async(data)=>{
+            if(socket){
+                socket.emit('webrtcSignal',{
+                    sdp:data,
+                    ongoingCall,
+                    isCaller:true
+                });
+            }
         });
 
-    }, [localStream, createPeer, peer, ongoingCall]);
+    },[localStream,createPeer,peer,ongoingCall])
 
-    const handleJoinCall = useCallback(async (ongoingCall) => {
-        setOngoingCall(prev => prev ? { ...prev, isRinging: false } : prev);
+    const handleJoinCall=useCallback(async(ongoingCall)=>{
+        //console.log("joining call",ongoingCall);
+        setOngoingCall(prev=>{
+            if(prev){
+                return {...prev,isRinging:false}
+            }
+            return prev;
+        })
 
-        const stream = await getMediaStream();
-        if (!stream) {
+        const stream=await getMediaStream();
+        if(!stream){
             console.error("No stream in handle call");
-            return;
+                return;
         }
 
-        const newPeer = createPeer(stream, false);
+        const newPeer=createPeer(stream,true);
         setPeer({
-            peerConnection: newPeer,
-            participantUser: ongoingCall.participants.caller,
-            stream: undefined
+            peerConnection:newPeer,
+            participantUser:ongoingCall.participants.caller,
+            stream:undefined
+        })
+
+        newPeer.on('signal',async(data)=>{
+            if(socket){
+                socket.emit('webrtcSignal',{
+                    sdp:data,
+                    ongoingCall,
+                    isCaller:false
+                });
+            }
         });
 
-    }, [createPeer, getMediaStream]);
+    },[socket,currentSocketUser])
 
     useEffect(() => {
         const newSocket = io();

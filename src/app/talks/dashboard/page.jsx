@@ -37,6 +37,13 @@ function UserDashboard() {
   const [answers, setAnswers] = useState([]);
   const [blogs, setBlogs] = useState([]);
 
+ 
+  const fetchUser = async () => {
+    const response = await fetch(`http://localhost:9000/api/v1/users/getUserEmailById/${id}`);
+    const data = await response.json();
+    console.log("dataM",data);
+    setUser(data);
+  };
 
   const getUserReputation = async () => {
     try {
@@ -100,7 +107,7 @@ function UserDashboard() {
       });
       const data = response.data;
       setBlogs(data);
-      setUser(data[0].authorName);
+      //setUser(data[0].authorName);
     }
     catch (error) {
       console.error("Error fetching blogs:", error);
@@ -115,6 +122,7 @@ function UserDashboard() {
     getUserReputation();
     questionsAsked();
     answersGiven();
+    fetchUser();
     blogsWritten();
   }
     , [id]);
