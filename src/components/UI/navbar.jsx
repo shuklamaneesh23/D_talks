@@ -44,14 +44,14 @@ export default function Navbar() {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-slate-200 rounded-box w-52"
           >
             <Link href="/talks/blog">
               <li>Blogs</li>
             </Link>
             <li>
               <a>Learn</a>
-              <ul className="p-2 bg-white">
+              <ul className="p-2 bg-slate-200">
                 <Link href="/#black">
                   <li>How to use?</li>
                 </Link>
@@ -65,6 +65,9 @@ export default function Navbar() {
             </Link>
             <Link href="/talks/askDoubt">
               <li>Ask Doubt</li>
+            </Link>
+            <Link href="/talks/dashboard">
+              <li>DashBoard</li>
             </Link>
           </ul>
         </div>
@@ -96,6 +99,11 @@ export default function Navbar() {
           <li>
             <Link href="/talks/askDoubt">Ask Doubt</Link>
           </li>
+          <li>
+          <Link href="/talks/dashboard">
+              DashBoard
+            </Link>
+            </li>
         </ul>
       </div>
       {/* login button here */}

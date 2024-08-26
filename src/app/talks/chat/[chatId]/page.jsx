@@ -102,7 +102,8 @@ const ChatWindow = () => {
     return (
         <div className="flex flex-col h-screen">
             {/* Header */}
-            <div className="flex items-center border-b">
+            <div className="flex justify-between pl-4 pr-8 items-center  border-b">
+            <div className="flex items-center  border-b">
                 <div className="flex-shrink-0">
                     <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
                         {receiver.email[0].toUpperCase()}
@@ -121,9 +122,11 @@ const ChatWindow = () => {
                     )}
                     </p>
                 </div>
-                <div onClick={()=>handleCall(r2)}>
-                    <button className="ml-auto p-2 bg-blue-600 text-white rounded-lg">
-                        Call
+            </div>
+                <div className="justify-end"
+                 onClick={()=>handleCall(r2)}>
+                    <button className="p-2 bg-blue-600 text-white rounded-lg">
+                        Video Call
                     </button>
                 </div>
                 

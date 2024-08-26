@@ -9,7 +9,7 @@ function Footer() {
     return (
         <footer className="footer p-10 bg-gray-600 text-white">
             <nav>
-                <h6 className="footer-title">D-Talks</h6>
+                <Link href="/" ><h6 className="footer-title">D-Talks</h6></Link>
                 <Link href="/talks/allQuestions" className="link link-hover">Questions</Link>
                 <Link href="/talks/askDoubt" className="link link-hover">Ask Doubt</Link>
                 <Link href="/talks/chat" className="link link-hover">Chat</Link>
@@ -17,8 +17,8 @@ function Footer() {
             <nav>
                 <h6 className="footer-title">Support</h6>
                 <Link href="/talks/login" className="link link-hover">Login/Register</Link>
-                <Link href="/talks/ai" className="link link-hover">AI Talks</Link>
-                <Link href="/talks/about" className="link link-hover">About us</Link>
+                <Link href="/talks/blog" className="link link-hover">Blogs</Link>
+                <Link href="#" className="link link-hover">About us</Link>
             </nav>
             <nav>
                 <h6 className="footer-title">Social</h6>
