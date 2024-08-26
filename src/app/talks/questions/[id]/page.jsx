@@ -88,7 +88,7 @@ export default function StackOverflowQuestionView({ params }) {
             }
         } catch (error) {
             setError("An error occurred while fetching the data.");
-        } 
+        }
         finally {
             //setLoading(false);
         }
@@ -339,6 +339,7 @@ export default function StackOverflowQuestionView({ params }) {
                     <button
                         onClick={handleUpvote}
                         className="text-gray-500 hover:text-gray-700"
+                        disabled={!mail} // Disable button if mail is null
                     >
                         <IconChevronUp size={24} />
                     </button>
@@ -348,6 +349,7 @@ export default function StackOverflowQuestionView({ params }) {
                     <button
                         onClick={handleDownvote}
                         className="text-gray-500 hover:text-gray-700"
+                        disabled={!mail} // Disable button if mail is null
                     >
                         <IconChevronDown size={24} />
                     </button>
@@ -364,7 +366,7 @@ export default function StackOverflowQuestionView({ params }) {
                             </span>
                         ))}
                     </div>
-                    <div className="text-right text-sm text-gray-500 flex  justify-end gap-3 items-center">
+                    <div className="text-right text-sm text-gray-500 flex justify-end gap-3 items-center">
                         <p>{question.authorName}</p>
                         <QuestionTime createdAt={question.createdAt} />
                     </div>
@@ -386,8 +388,8 @@ export default function StackOverflowQuestionView({ params }) {
                         <div className="mt-4 w-full max-w-3xl p-4 rounded-lg shadow-md">
                             <h2 className="text-xl font-semibold mb-2">Explanation:</h2>
                             <pre className="p-4 bg-gray-100 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                                        <code className="text-sm text-gray-800">{explanation}</code>
-                                    </pre>
+                                <code className="text-sm text-gray-800">{explanation}</code>
+                            </pre>
                         </div>
                     )}
                 </div>
@@ -404,6 +406,7 @@ export default function StackOverflowQuestionView({ params }) {
                                 <button
                                     onClick={() => handleAnswerUpvote(answer._id)}
                                     className="text-gray-500 hover:text-gray-700"
+                                    disabled={!mail} // Disable button if mail is null
                                 >
                                     <IconChevronUp size={24} />
                                 </button>
@@ -413,6 +416,7 @@ export default function StackOverflowQuestionView({ params }) {
                                 <button
                                     onClick={() => handleAnswerDownvote(answer._id)}
                                     className="text-gray-500 hover:text-gray-700"
+                                    disabled={!mail} // Disable button if mail is null
                                 >
                                     <IconChevronDown size={24} />
                                 </button>
@@ -426,7 +430,7 @@ export default function StackOverflowQuestionView({ params }) {
                                 )}
                             </div>
                         </div>
-                        <div className="text-right text-sm text-gray-500 flex  justify-end gap-3 items-center">
+                        <div className="text-right text-sm text-gray-500 flex justify-end gap-3 items-center">
                             <p>{answer.authorName}</p>
                             <QuestionTime createdAt={answer.createdAt} />
                         </div>
@@ -456,6 +460,7 @@ export default function StackOverflowQuestionView({ params }) {
                 <button
                     onClick={handleNewAnswer}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                    disabled={!mail} // Disable button if mail is null
                 >
                     Submit Answer
                 </button>
@@ -463,5 +468,6 @@ export default function StackOverflowQuestionView({ params }) {
 
             {/* send button end here */}
         </div>
+
     );
 }

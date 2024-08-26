@@ -52,7 +52,7 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-slate-200 rounded-box w-52"
           >
             <Link href="/talks/blog">
-              <li className={mail ? "" : "disabled pointer-events-none opacity-50"}>Blogs</li>
+              <li>Blogs</li>
             </Link>
             <li>
               <a className={mail ? "" : "disabled pointer-events-none opacity-50"}>Learn</a>
@@ -60,7 +60,7 @@ export default function Navbar() {
                 <Link href="/#black">
                   <li>How to use?</li>
                 </Link>
-                <Link href="/talks/allQuestion">
+                <Link href="/talks/allQuestions">
                   <li>Question Bank</li>
                 </Link>
               </ul>
@@ -82,7 +82,7 @@ export default function Navbar() {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li className={mail ? "" : " pointer-events-none text-slate-800"}>
+          <li>
             <Link href="/talks/blog">Blogs</Link>
           </li>
           <li>
@@ -93,7 +93,7 @@ export default function Navbar() {
                   <Link href="/#black">How to use?</Link>
                 </li>
                 <li>
-                  <Link href="/talks/allQuestion">Question Bank</Link>
+                  <Link href="/talks/allQuestions">Question Bank</Link>
                 </li>
               </ul>
             </details>

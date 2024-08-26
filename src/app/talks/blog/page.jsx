@@ -1,7 +1,10 @@
+"use client";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import formatDate from "@/components/utils/formatDate";
+import UserContext from "@/context/UserContext";
+import { useContext,useState,useEffect } from "react";
 
 function truncateText(text, maxWords) {
     const words = text.split(" ");
@@ -13,13 +16,28 @@ function truncateText(text, maxWords) {
 
 
 
-export default async function Home() {
-    const res = await axios.get('http://localhost:9000/api/v1/blogs');
-    const posts = await res.data;
-    console.log("posts");
-    console.log(posts[0].image);
+export default function Home() {
 
-    // Destructure the first post and the rest of the posts
+    const { mail } = useContext(UserContext);
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const res = await axios.get('http://localhost:9000/api/v1/blogs');
+                setPosts(res.data);
+            } catch (error) {
+                console.error("Error fetching posts:", error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
+    if (!posts.length) {
+        return <div>Loading...</div>;
+    }
+
     const [firstPost, ...otherPosts] = posts;
 
     return (
@@ -27,11 +45,16 @@ export default async function Home() {
             <header>
                 <div className="relative">
                     <div className="flex justify-end p-6">
-                        <Link href="/talks/blog/write">
-                            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Write Blog
-                            </button>
-                        </Link>
+                    <Link href="/talks/blog/write">
+            <button 
+                className={`${
+                    mail ? "bg-red-500 hover:bg-red-700" : "bg-gray-400 cursor-not-allowed"
+                } text-white font-bold py-2 px-4 rounded`}
+                disabled={!mail}
+            >
+                Write Blog
+            </button>
+        </Link>
                     </div>
                     <div
                         className="bg-cover bg-center w-full h-48 mb-4"
