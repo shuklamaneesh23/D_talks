@@ -8,11 +8,11 @@ import CallNotification from "@/components/UI/callNotification.jsx";
 import VideoCall from "@/components/utils/videoCall";
 
 const ChatWindow = () => {
-    const { chatId, uid,onlineUsers,handleCall } = useContext(UserContext);
-    console.log("onUser",onlineUsers);
+    const { chatId, uid, onlineUsers, handleCall } = useContext(UserContext);
+    console.log("onUser", onlineUsers);
     const id = uid;
     //we need to set r2 as that user here whose user.profile===receiver.name from the onlineUsers array
-    
+
 
     const [chat, setChat] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ const ChatWindow = () => {
         friends: [],
         frndRequests: [],
     });
-    
+
 
     useEffect(() => {
         fetchChat();
@@ -60,19 +60,19 @@ const ChatWindow = () => {
         const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
             cluster: "ap2",
         });
-    
+
         const channel = pusher.subscribe(`chat-${chatId}`);
         channel.bind("new-message", function (data) {
             setMessages((messages) => [...messages, data.message]);
         });
-    
+
         return () => {
             channel.unbind_all();
             channel.unsubscribe();
         };
     }, [chatId]);
-    
-    const r2=onlineUsers.find((user)=>user.profile===receiver.name);
+
+    const r2 = onlineUsers.find((user) => user.profile === receiver.name);
 
 
     const postMessage = async () => {
@@ -103,48 +103,49 @@ const ChatWindow = () => {
         <div className="flex flex-col h-screen">
             {/* Header */}
             <div className="flex justify-between pl-4 pr-8 items-center  border-b">
-            <div className="flex items-center  border-b">
-                <div className="flex-shrink-0">
-                    <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
-                        {receiver.email[0].toUpperCase()}
-                    </span>
+                <div className="flex items-center  border-b">
+                    <div className="flex-shrink-0">
+                        <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
+                            {receiver.email[0].toUpperCase()}
+                        </span>
+                    </div>
+                    <div className="ml-4">
+                        <h2 className="text-xl font-bold">{receiver.name}</h2>
+                        <p className="text-gray-500">{receiver.email}</p>
+                        <p className="text-gray-500">
+                            {/* //onlineUsers is an array of objects with profile and socketId,check if the profile is equal to receiver.name */}
+                            {onlineUsers.map((user) => {
+                                if (user.profile === receiver.name) {
+                                    return <span key={user.id} className="text-green-500">Online</span>;
+                                }
+                                return null; // Return null if the condition is not met
+                            })}
+
+                        </p>
+                    </div>
                 </div>
-                <div className="ml-4">
-                    <h2 className="text-xl font-bold">{receiver.name}</h2>
-                    <p className="text-gray-500">{receiver.email}</p>
-                    <p className="text-gray-500">
-                    {/* //onlineUsers is an array of objects with profile and socketId,check if the profile is equal to receiver.name */}
-                    {onlineUsers.map((user) => {
-                        if(user.profile === receiver.name){
-                            return <span className="text-green-500">Online</span>
-                        }
-                    }
-                    )}
-                    </p>
-                </div>
-            </div>
                 <div className="justify-end"
-                 onClick={()=>handleCall(r2)}>
+                    onClick={() => handleCall(r2)}>
                     <button className="p-2 bg-blue-600 text-white rounded-lg">
                         Video Call
                     </button>
                 </div>
-                
+
             </div>
 
             {/* Chat Messages */}
-            
+
             <div className="bg-black">
-                  <CallNotification />
-                  <VideoCall />
+                <CallNotification />
+                <VideoCall />
             </div>
             <div className="flex-grow overflow-y-auto p-4 bg-green-500">
                 {messages.map((message) => (
                     <div
                         key={message._id}
                         className={`p-4 my-2 rounded-lg max-w-xs ${message.sender === sender._id
-                                ? "bg-blue-600 text-white ml-auto text-right"
-                                : "bg-gray-100 mr-auto text-left"
+                            ? "bg-blue-600 text-white ml-auto text-right"
+                            : "bg-gray-100 mr-auto text-left"
                             }`}
                         style={{ wordBreak: "break-word" }}
                     >
