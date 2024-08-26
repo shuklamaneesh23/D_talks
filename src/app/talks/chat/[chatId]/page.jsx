@@ -4,10 +4,15 @@ import UserContext from "@/context/UserContext";
 import { useContext, useState, useEffect } from "react";
 import QuestionTime from "@/components/utils/timeCalculater";
 import Pusher from "pusher-js";
+import CallNotification from "@/components/UI/callNotification.jsx";
+import VideoCall from "@/components/utils/videoCall";
 
 const ChatWindow = () => {
-    const { chatId, uid } = useContext(UserContext);
+    const { chatId, uid,onlineUsers,handleCall } = useContext(UserContext);
+    console.log("onUser",onlineUsers);
     const id = uid;
+    //we need to set r2 as that user here whose user.profile===receiver.name from the onlineUsers array
+    
 
     const [chat, setChat] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -25,6 +30,7 @@ const ChatWindow = () => {
         friends: [],
         frndRequests: [],
     });
+    
 
     useEffect(() => {
         fetchChat();
@@ -66,7 +72,7 @@ const ChatWindow = () => {
         };
     }, [chatId]);
     
-
+    const r2=onlineUsers.find((user)=>user.profile===receiver.name);
 
 
     const postMessage = async () => {
@@ -105,10 +111,31 @@ const ChatWindow = () => {
                 <div className="ml-4">
                     <h2 className="text-xl font-bold">{receiver.name}</h2>
                     <p className="text-gray-500">{receiver.email}</p>
+                    <p className="text-gray-500">
+                    {/* //onlineUsers is an array of objects with profile and socketId,check if the profile is equal to receiver.name */}
+                    {onlineUsers.map((user) => {
+                        if(user.profile === receiver.name){
+                            return <span className="text-green-500">Online</span>
+                        }
+                    }
+                    )}
+                    </p>
                 </div>
+                <div onClick={()=>handleCall(r2)}>
+                    <button className="ml-auto p-2 bg-blue-600 text-white rounded-lg">
+                        Call
+                    </button>
+                </div>
+                
             </div>
 
             {/* Chat Messages */}
+            
+            <div className="bg-black mt-12">
+                  <p className="text-white">Hello</p>
+                  <CallNotification />
+                  <VideoCall />
+            </div>
             <div className="flex-grow overflow-y-auto p-4 bg-green-500">
                 {messages.map((message) => (
                     <div

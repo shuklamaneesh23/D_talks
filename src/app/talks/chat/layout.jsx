@@ -133,8 +133,8 @@ const Layout = ({ children }) => {
                     <h2 className="text-xl font-bold">Your Friends</h2>
                     <div className="mt-4">
                         <div className="flex flex-col gap-3">
-                            {frnds &&
-                                frnds.slice(0, 3).map((frnd) => (
+                        
+                            {frnds && frnds.slice(0, 3).map((frnd) => (
                                     <Link href="#" key={frnd._id}>
                                         <div
                                             className="p-4 border rounded-md flex items-center cursor-pointer"

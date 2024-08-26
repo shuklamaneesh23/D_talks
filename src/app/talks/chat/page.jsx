@@ -39,7 +39,7 @@ export default function Chat() {
                 <h2 className="text-2xl font-bold">Recent chats</h2>
                 <div className="overflow-y-auto flex-grow max-h-[80vh] mb-16">
                     <div className="mt-4 gap-6 space-y-6">
-                        {chat.map((ch) => (
+                        {chat && chat.map((ch) => (
                             <div
                                 onClick={() => {
                                     setChatId(ch._id); // Set the chat ID
