@@ -1,5 +1,5 @@
 'use client';
-import VideoContainer from "./VideoContainer";
+import VideoContainer from "./videoContainer.jsx";
 import UserContext from "@/context/UserContext";
 import React, { useCallback, useContext, useEffect } from "react";
 

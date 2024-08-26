@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
     useEffect(() => {
         const fetchCounts = async () => {
             const response = await fetch(
-                `http://localhost:9000/api/v1/users/getUserEmailById/${id}`
+                `https://d-talks-backend.vercel.app/api/v1/users/getUserEmailById/${id}`
             );
             const data = await response.json();
             setUserObj(data);
@@ -52,7 +52,7 @@ const Layout = ({ children }) => {
 
     const fetchFrnds = async () => {
         const response = await fetch(
-            `http://localhost:9000/api/v1/users/getFriends/${id}`
+            `https://d-talks-backend.vercel.app/api/v1/users/getFriends/${id}`
         );
         const data = await response.json();
         setFrnds(data);
@@ -68,7 +68,7 @@ const Layout = ({ children }) => {
         //console.log("id", id);
         try {
             const response = await fetch(
-                `http://localhost:9000/api/v1/chats/createChat`,
+                `https://d-talks-backend.vercel.app/api/v1/chats/createChat`,
                 {
                     method: "POST",
                     headers: {

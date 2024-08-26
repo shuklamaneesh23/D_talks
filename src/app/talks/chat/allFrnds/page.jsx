@@ -20,7 +20,7 @@ const AllFrnds = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch(`http://localhost:9000/api/v1/users/getFriends/${id}`);
+            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/users/getFriends/${id}`);
             const data = await response.json();
             setUsers(data);
             console.log("data", data);
@@ -35,7 +35,7 @@ const AllFrnds = () => {
         //console.log("friendId", friendId);
         //console.log("id", id);
         try {
-            const response = await fetch(`http://localhost:9000/api/v1/chats/createChat`, {
+            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/chats/createChat`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -51,8 +51,8 @@ function QuestionForm() {
         formData.append("content", content);
         if (user == null) {
             try {
-                //API call to fetch username corresponding to mail with the help of this api--- "http://localhost:8000/api/users/${mail}"
-                const response = await fetch(`http://localhost:8000/api/users/${mail}`);
+                //API call to fetch username corresponding to mail with the help of this api--- "https://pg-back.vercel.app/api/users/${mail}"
+                const response = await fetch(`https://pg-back.vercel.app/api/users/${mail}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch user data.");
                 }
@@ -77,7 +77,7 @@ function QuestionForm() {
         // API call to submit the form data
         try {
             console.log("formData", formData.content);
-            const response = await fetch("http://localhost:9000/api/v1/questions/", {
+            const response = await fetch("https://d-talks-backend.vercel.app/api/v1/questions/", {
                 method: "POST",
                 body: formData,
             });

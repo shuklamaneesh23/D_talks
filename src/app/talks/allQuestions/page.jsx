@@ -13,7 +13,7 @@ function QuestionsList() {
 
     const fetchQuestions = async () => {
         try {
-            const response = await fetch('http://localhost:9000/api/v1/questions/allQuestions');
+            const response = await fetch('https://d-talks-backend.vercel.app/api/v1/questions/allQuestions');
             if (!response.ok) {
                 throw new Error('Failed to fetch questions.');
             }

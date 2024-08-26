@@ -25,7 +25,7 @@ export default function StackOverflowQuestionView({ params }) {
     const getDetailedQuestion = async () => {
         try {
             const response = await fetch(
-                `http://localhost:9000/api/v1/questions/getQuestion/${id}`
+                `https://d-talks-backend.vercel.app/api/v1/questions/getQuestion/${id}`
             );
             if (!response.ok) {
                 throw new Error("Failed to fetch question.");
@@ -102,7 +102,7 @@ export default function StackOverflowQuestionView({ params }) {
 
     const handleUpvote = async () => {
         const response = await fetch(
-            `http://localhost:9000/api/v1/votes/upvote/${id}`,
+            `https://d-talks-backend.vercel.app/api/v1/votes/upvote/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -143,7 +143,7 @@ export default function StackOverflowQuestionView({ params }) {
 
     const handleDownvote = async () => {
         const response = await fetch(
-            `http://localhost:9000/api/v1/votes/downvote/${id}`,
+            `https://d-talks-backend.vercel.app/api/v1/votes/downvote/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -186,7 +186,7 @@ export default function StackOverflowQuestionView({ params }) {
     const handleAnswerUpvote = async (answerId) => {
         // Make an API request to handle the upvote
         const response = await fetch(
-            `http://localhost:9000/api/v1/votes/upvoteAnswer/${id}`,
+            `https://d-talks-backend.vercel.app/api/v1/votes/upvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -234,7 +234,7 @@ export default function StackOverflowQuestionView({ params }) {
     const handleAnswerDownvote = async (answerId) => {
         // Make an API request to handle the downvote
         const response = await fetch(
-            `http://localhost:9000/api/v1/votes/downvoteAnswer/${id}`,
+            `https://d-talks-backend.vercel.app/api/v1/votes/downvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -293,8 +293,8 @@ export default function StackOverflowQuestionView({ params }) {
         };
         if (user == null) {
             try {
-                //API call to fetch username corresponding to mail with the help of this api--- "http://localhost:8000/api/users/${mail}"
-                const response = await fetch(`http://localhost:8000/api/users/${mail}`);
+                //API call to fetch username corresponding to mail with the help of this api--- "https://pg-back.vercel.app/api/users/${mail}"
+                const response = await fetch(`https://pg-back.vercel.app/api/users/${mail}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch user data.");
                 }
@@ -309,7 +309,7 @@ export default function StackOverflowQuestionView({ params }) {
         //console.log("mshukl", id);
         //console.log("newAnswerObj", newAnswerObj);
         const response = await fetch(
-            `http://localhost:9000/api/v1/questions/answerQuestion/${id}`,
+            `https://d-talks-backend.vercel.app/api/v1/questions/answerQuestion/${id}`,
             {
                 method: "PUT",
                 headers: {

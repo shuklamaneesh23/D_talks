@@ -24,7 +24,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await axios.get('http://localhost:9000/api/v1/blogs');
+                const res = await axios.get('https://d-talks-backend.vercel.app/api/v1/blogs');
                 setPosts(res.data);
             } catch (error) {
                 console.error("Error fetching posts:", error);

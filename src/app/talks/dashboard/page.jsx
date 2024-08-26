@@ -49,7 +49,7 @@ function UserDashboard() {
 
  
   const fetchUser = async () => {
-    const response = await fetch(`http://localhost:9000/api/v1/users/getUserEmailById/${id}`);
+    const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/users/getUserEmailById/${id}`);
     const data = await response.json();
     console.log("dataM",data);
     setUser(data);
@@ -57,7 +57,7 @@ function UserDashboard() {
 
   const getUserReputation = async () => {
     try {
-      const response = await axios.post("http://localhost:9000/api/v1/votes/getNetVotes", {
+      const response = await axios.post("https://d-talks-backend.vercel.app/api/v1/votes/getNetVotes", {
         authorEmail: mail
       }, {
         headers: {
@@ -75,7 +75,7 @@ function UserDashboard() {
 
   const questionsAsked = async () => {
     try {
-      const response = await axios.post("http://localhost:9000/api/v1/votes/getQuestionsAskedByUser", {
+      const response = await axios.post("https://d-talks-backend.vercel.app/api/v1/votes/getQuestionsAskedByUser", {
         authorEmail: mail
       }, {
         headers: {
@@ -91,7 +91,7 @@ function UserDashboard() {
 
   const answersGiven = async () => {
     try {
-      const response = await axios.post("http://localhost:9000/api/v1/votes/getAnswersByUser", {
+      const response = await axios.post("https://d-talks-backend.vercel.app/api/v1/votes/getAnswersByUser", {
         authorEmail: mail
       }, {
         headers: {
@@ -108,7 +108,7 @@ function UserDashboard() {
 
   const blogsWritten = async () => {
     try {
-      const response = await axios.post("http://localhost:9000/api/v1/blogs/getBlogsByAuthor", {
+      const response = await axios.post("https://d-talks-backend.vercel.app/api/v1/blogs/getBlogsByAuthor", {
         authorId: id
       }, {
         headers: {

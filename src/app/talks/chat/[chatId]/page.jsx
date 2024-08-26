@@ -39,7 +39,7 @@ const ChatWindow = () => {
     const fetchChat = async () => {
         try {
             const response = await fetch(
-                `http://localhost:9000/api/v1/chats/${chatId}`
+                `https://d-talks-backend.vercel.app/api/v1/chats/${chatId}`
             );
             const data = await response.json();
             setChat(data.chat);
@@ -78,7 +78,7 @@ const ChatWindow = () => {
     const postMessage = async () => {
         try {
             const response = await fetch(
-                `http://localhost:9000/api/v1/chats/${chatId}/sendMessage`,
+                `https://d-talks-backend.vercel.app/api/v1/chats/${chatId}/sendMessage`,
                 {
                     method: "POST",
                     headers: {

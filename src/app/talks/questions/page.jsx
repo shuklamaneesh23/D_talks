@@ -8,10 +8,10 @@ function QuestionsList() {
 
 
     const [questions, setQuestions] = React.useState([]);
-    //write a function to fetch questions from the backend using this api "http://localhost:9000/api/v1/questions/allQuestions" --> use useEffect to call the function
+    //write a function to fetch questions from the backend using this api "https://d-talks-backend.vercel.app/api/v1/questions/allQuestions" --> use useEffect to call the function
     const fetchQuestions = async () => {
         try {
-            const response = await fetch('http://localhost:9000/api/v1/questions/allQuestions');
+            const response = await fetch('https://d-talks-backend.vercel.app/api/v1/questions/allQuestions');
             if (!response.ok) {
                 throw new Error('Failed to fetch questions.');
             }

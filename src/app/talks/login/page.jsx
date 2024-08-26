@@ -32,7 +32,7 @@ export default function RegisterLogin() {
         try {
             console.log("Adding user");
             console.log("name",name);
-            const res=await axios.post("http://localhost:9000/api/v1/users/addUser",{
+            const res=await axios.post("https://d-talks-backend.vercel.app/api/v1/users/addUser",{
                 email:email,
                 name:name,
                 uid:auth.currentUser.uid,
@@ -93,7 +93,7 @@ export default function RegisterLogin() {
 
     const saveChanges = async () => {
         try {
-            const res=await axios.post("http://localhost:8000/api/users",{
+            const res=await axios.post("https://pg-back.vercel.app/api/users",{
                 email:email,
                 username:username
             });

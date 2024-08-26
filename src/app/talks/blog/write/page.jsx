@@ -55,7 +55,7 @@ const CreateBlogPost = () => {
             console.log(formData.get('authorName'));
             //data type of authorName
             console.log(typeof(formData.get('authorName')));
-            const response = await axios.post('http://localhost:9000/api/v1/blogs', formData, {
+            const response = await axios.post('https://d-talks-backend.vercel.app/api/v1/blogs', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

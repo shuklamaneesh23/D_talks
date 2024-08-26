@@ -10,7 +10,7 @@ export default function Chat() {
     const fetchChat = async () => {
         try {
             const response = await fetch(
-                `http://localhost:9000/api/v1/chats/getAllChats/${id}`
+                `https://d-talks-backend.vercel.app/api/v1/chats/getAllChats/${id}`
             );
             const data = await response.json();
             console.log(data.chats);

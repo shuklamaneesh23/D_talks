@@ -32,7 +32,7 @@ const UserListWithRequests = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch(`http://localhost:9000/api/v1/users/getUserWhoAreNotFriends/${id}`); // Replace with your API endpoint
+            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/users/getUserWhoAreNotFriends/${id}`); // Replace with your API endpoint
             const data = await response.json();
             setUsers(data);
             console.log("data", data);
@@ -45,7 +45,7 @@ const UserListWithRequests = () => {
 
     const sendFriendRequest = async (userId) => {
         try {
-            const response = await axios.post('http://localhost:9000/api/v1/users/sendFriendRequest', {
+            const response = await axios.post('https://d-talks-backend.vercel.app/api/v1/users/sendFriendRequest', {
                 uid: id,  // Assuming `id` is defined and correct
                 fid: userId,
             }, {
