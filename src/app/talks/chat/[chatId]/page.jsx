@@ -131,8 +131,7 @@ const ChatWindow = () => {
 
             {/* Chat Messages */}
             
-            <div className="bg-black mt-12">
-                  <p className="text-white">Hello</p>
+            <div className="bg-black">
                   <CallNotification />
                   <VideoCall />
             </div>

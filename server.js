@@ -52,6 +52,16 @@ app.prepare().then(() => {
         //call events
         socket.on('call',onCall);
         socket.on('webrtcSignal',onWebrtcSignal);
+
+        socket.on('hangup', (participants) => {
+            const { caller, receiver } = participants;
+            if (caller.socketId) {
+                io.to(caller.socketId).emit('hangup');
+            }
+            if (receiver.socketId) {
+                io.to(receiver.socketId).emit('hangup');
+            }
+        });
     });
 
     httpServer

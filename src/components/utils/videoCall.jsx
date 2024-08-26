@@ -1,67 +1,113 @@
 'use client';
 import VideoContainer from "./VideoContainer";
 import UserContext from "@/context/UserContext";
-import React,{ useCallback, useContext, useEffect } from "react";
-
+import React, { useCallback, useContext, useEffect } from "react";
 
 const VideoCall = () => {
-    const { localStream } = useContext(UserContext);
+    const { localStream, handleHangup, peer } = useContext(UserContext);
     const [isVidOn, setIsVidOn] = React.useState(true);
     const [isMicOn, setIsMicOn] = React.useState(true);
-    console.log('localStream', localStream);
-
+    
+    // Update state when localStream is set
     useEffect(() => {
-        if(localStream){
+        if (localStream) {
             const videoTrack = localStream.getVideoTracks()[0];
             const audioTrack = localStream.getAudioTracks()[0];
-            setIsVidOn(videoTrack.enabled);
-            setIsMicOn(audioTrack.enabled);
+            setIsVidOn(videoTrack?.enabled ?? false);
+            setIsMicOn(audioTrack?.enabled ?? false);
         }
-    }
-    ,[localStream]);
+    }, [localStream]);
 
+    // Toggle Camera On/Off
     const toggleCamera = useCallback(() => {
-        if(localStream){
+        if (localStream) {
             const videoTrack = localStream.getVideoTracks()[0];
-            videoTrack.enabled = !videoTrack.enabled;
-            setIsVidOn(videoTrack.enabled);
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                setIsVidOn(videoTrack.enabled);
+            }
         }
-    }
-    ,[localStream]);
+    }, [localStream]);
 
+    // Toggle Microphone On/Off
     const toggleMic = useCallback(() => {
-        if(localStream){
+        if (localStream) {
             const audioTrack = localStream.getAudioTracks()[0];
-            audioTrack.enabled = !audioTrack.enabled;
-            setIsMicOn(audioTrack.enabled);
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                setIsMicOn(audioTrack.enabled);
+            }
         }
-    }
-    ,[localStream]);
+    }, [localStream]);
 
+    // Attach Local Stream to Video Element
+    useEffect(() => {
+        const localVideoElement = document.getElementById('localVideo');
+        if (localStream && localVideoElement) {
+            localVideoElement.srcObject = localStream;
+            localVideoElement.play();
+        }
+    }, [localStream]);
+
+    // Attach Remote Stream to Video Element
+    useEffect(() => {
+        const remoteVideoElement = document.getElementById('remoteVideo');
+        if (peer?.stream && remoteVideoElement) {
+            console.log("Attaching remote stream to video element.");
+            remoteVideoElement.srcObject = peer.stream;
+            remoteVideoElement.play();
+        }
+    }, [peer?.stream]);
 
     return (
-        <div>
-           <div>
-           {localStream && (
-                <VideoContainer
-                    stream={localStream}
-                    isLocalStream={true}
-                    isOnCall={false}
-                />
+        <div className="relative flex flex-col bg-slate-100 gap-9 items-center">
+            <div>
+                {/* Display local stream */}
+                {localStream && (
+                    <VideoContainer
+                        stream={localStream}
+                        isLocalStream={true}
+                        isOnCall={true}
+                    />
+                )}
+                {/* Display remote stream */}
+                {peer?.stream && (
+                    <VideoContainer
+                        stream={peer.stream}
+                        isLocalStream={false}
+                        isOnCall={true}
+                    />
+                )}
+            </div>
+            {/* Control buttons */}
+            {localStream && (
+                <div className="mt-8 flex items-center space-x-8 bg-slate-100 p-4 rounded-lg bottom-10">
+                    <button 
+                        onClick={toggleCamera}
+                        className={`px-4 py-2 rounded-full text-white transition-colors duration-300 ${
+                            isVidOn ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+                        }`}
+                    >
+                        {isVidOn ? "Turn off camera" : "Turn on camera"}
+                    </button>
+                    <button 
+                        onClick={toggleMic}
+                        className={`px-4 py-2 rounded-full text-white transition-colors duration-300 ${
+                            isMicOn ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+                        }`}
+                    >
+                        {isMicOn ? "Turn off mic" : "Turn on mic"}
+                    </button>
+                    <button 
+                        onClick={handleHangup}
+                        className="px-4 py-2 rounded-full bg-red-700 text-white hover:bg-red-800 transition-colors duration-300"
+                    >
+                        End Call
+                    </button>
+                </div>
             )}
-           </div>
-           <div className="mt-8 mb-8 bg-pink-800 flex items-center">
-           <button onClick={toggleCamera}>
-                {isVidOn ? "Turn off camera" : "Turn on camera"}
-            </button>
-            <button onClick={toggleMic}>
-                {isMicOn ? "Turn off mic" : "Turn on mic"}
-            </button>
-            <button>End Call</button> 
-        </div>
         </div>
     );
-
 }
 
 export default VideoCall;

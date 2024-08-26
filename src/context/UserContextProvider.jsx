@@ -1,12 +1,10 @@
 "use client";
 import React, { useCallback, useEffect } from "react";
 import UserContext from "./UserContext";
-import {io,Socket} from "socket.io-client";
-import { set } from "mongoose";
+import { io } from "socket.io-client";
 import Peer from 'simple-peer';
 
 const UserContextProvider = ({ children }) => {
-    // Initialize state from localStorage if available
     const [user, setUser] = React.useState(() => {
         const storedUser = localStorage.getItem('user');
         return storedUser ? JSON.parse(storedUser) : null;
@@ -20,14 +18,12 @@ const UserContextProvider = ({ children }) => {
     const [uid, setUid] = React.useState(() => {
         const storedUid = localStorage.getItem('uid');
         return storedUid ? JSON.parse(storedUid) : null;
-    }
-    );
+    });
 
     const [chatId, setChatId] = React.useState(() => {
         const storedChatId = localStorage.getItem('chatId');
         return storedChatId ? JSON.parse(storedChatId) : null;
-    }
-    );
+    });
 
     const [socket, setSocket] = React.useState(null);
     const [isSocketConnected, setIsSocketConnected] = React.useState(false);
@@ -36,253 +32,250 @@ const UserContextProvider = ({ children }) => {
     const [localStream, setLocalStream] = React.useState(null);
     const [peer, setPeer] = React.useState(null);
 
-    const currentSocketUser=onlineUsers?.find(u=>u.userId===user);
-    
+    const currentSocketUser = onlineUsers?.find(u => u.userId === user);
+
     console.log("currentSocketUser", currentSocketUser);
     console.log("userH", user);
 
-    const getMediaStream=useCallback(async(faceMode)=>{
-        if(localStream) return localStream;
+    const getMediaStream = useCallback(async (faceMode) => {
+        if (localStream) return localStream;
 
         try {
-            const devices= await navigator.mediaDevices.enumerateDevices();
-            const vedioDevices=devices.filter(device=>device.kind==='videoinput');
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
-            const stream=await navigator.mediaDevices.getUserMedia({
-                audio:true,
-                video:{
-                    width:{min:640,ideal:1280,max:1920},
-                    height:{min:360,ideal:720,max:1080},
-                    frameRate:{min:16,ideal:30,max:30},
-                    facingMode:vedioDevices.length>0 ? faceMode:undefined,
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: {
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 360, ideal: 720, max: 1080 },
+                    frameRate: { min: 16, ideal: 30, max: 30 },
+                    facingMode: videoDevices.length > 0 ? faceMode : undefined,
                 }
             });
             setLocalStream(stream);
             return stream;
         } catch (error) {
-            console.error("Error accessing media devices.",error);
+            console.error("Error accessing media devices.", error);
             setLocalStream(null);
             return null;
-            
         }
+    }, [localStream]);
 
-    },[localStream])
-
+    const handleHangup = useCallback(() => {
+        if (peer) {
+            peer.peerConnection.destroy();
+            setPeer(null);
+        }
     
-    const handleCall= useCallback(async(user)=>{
-        if(!currentSocketUser || !socket) return;
+        if (localStream) {
+            localStream.getTracks().forEach((track) => track.stop());
+            setLocalStream(null);
+        }
+    
+        if (ongoingCall) {
+            // Emit the hangup signal to the other peer
+            socket.emit('hangup', ongoingCall.participants);
+    
+            // Clear the ongoing call state
+            setOngoingCall(null);
+        }
+    }, [peer, localStream, ongoingCall, socket]);
+    
 
-        const stream=await getMediaStream();
+    const handleCall = useCallback(async (user) => {
+        if (!currentSocketUser || !socket) return;
 
-        if(!stream){
+        const stream = await getMediaStream();
+
+        if (!stream) {
             console.error("No stream in handle call");
-             return;
+            return;
         }
 
-        const participants={caller:currentSocketUser,receiver:user};
+        const participants = { caller: currentSocketUser, receiver: user };
         setOngoingCall({
             participants,
-            isRinging:false
+            isRinging: false
         });
-        socket.emit('call',participants);
-        console.log("setting",participants);
-    },[socket,currentSocketUser,ongoingCall])
+        socket.emit('call', participants);
+        console.log("setting", participants);
+    }, [socket, currentSocketUser, ongoingCall]);
 
-    const onIncomingCall=useCallback((participants)=>{
-        //if(!currentSocketUser || !socket) return;
-
+    const onIncomingCall = useCallback((participants) => {
         setOngoingCall({
             participants,
-            isRinging:true
+            isRinging: true
         });
-        console.log("setted true",participants);
-    },[socket,user,ongoingCall])
+        console.log("setted true", participants);
+    }, [socket, user, ongoingCall]);
 
-
-    console.log("onlineUsers", onlineUsers);
-
-    const createPeer=useCallback((stream,initiator)=>{
-        const iceServers=[
+    const createPeer = useCallback((stream, initiator) => {
+        const iceServers = [
             {
-                urls:[
+                urls: [
                     'stun:stun.l.google.com:19302',
                     'stun:stun1.l.google.com:19302',
                     'stun:stun2.l.google.com:19302',
                     'stun:stun3.l.google.com:19302',
-                ]
-            }
+                ],
+            },
         ];
 
-        const peer= new Peer({
-            stream,
+        const newPeer = new Peer({
             initiator,
-            trickle:true,
-            config:{
-                iceServers
-            }
-        })
+            trickle: true,
+            stream,
+            config: { iceServers }
+        });
 
-        peer.on('stream',(stream)=>{
-            setPeer((prevPeer)=>{
-                if(prevPeer){
-                    return {...prevPeer,stream}
-                }
-                return prevPeer;
-            })
-    })
+        newPeer.on('stream', (remoteStream) => {
+            console.log('Received remote stream:', remoteStream);
+            setPeer((prevPeer) => ({
+                ...prevPeer,
+                stream: remoteStream
+            }));
+        });
 
-        peer.on('error',console.error);
-        peer.on('close',()=> handleHangup({}));
+        newPeer.on('signal', (data) => {
+            console.log('Peer signal data:', data);
+            socket.emit('webrtcSignal', {
+                sdp: data,
+                ongoingCall,
+                isCaller: initiator
+            });
+        });
 
-        const rtcPeerCoonection=(peer)._pc;
+        newPeer.on('error', console.error);
+        newPeer.on('close', () => handleHangup({}));
 
-        rtcPeerCoonection.oniceconnectionstatechange=async()=>{
-            if(rtcPeerCoonection.iceConnectionState==='disconnected' || rtcPeerCoonection.iceConnectionState==='failed'){
-                handleHangup({});
-            }
-        }
+        return newPeer;
+    }, [handleHangup, socket, ongoingCall]);
 
-        return peer;
-
-    },[ongoingCall,setPeer])
-
-    const completePeerConnection=useCallback(async(connectionData)=>{
-
-        if(!localStream){
+    const completePeerConnection = useCallback(async (connectionData) => {
+        if (!localStream) {
             console.error("No local stream in complete peer connection");
             return;
         }
 
-        if(peer){
-            peer.peerConnection.signal(connectionData.sdp);
+        if (peer) {
+            peer.signal(connectionData.sdp);
             return;
         }
 
-        const newPeer=createPeer(localStream,true);
+        const newPeer = createPeer(localStream, true);
         setPeer({
-            peerConnection:newPeer,
-            participantUser:connectionData.ongoingCall.participants.receiver,
-            stream:undefined
-        })
-
-        newPeer.on('signal',async(data)=>{
-            if(socket){
-                socket.emit('webrtcSignal',{
-                    sdp:data,
-                    ongoingCall,
-                    isCaller:true
-                });
-            }
+            peerConnection: newPeer,
+            participantUser: connectionData.ongoingCall.participants.receiver,
+            stream: undefined
         });
 
-    },[localStream,createPeer,peer,ongoingCall])
+    }, [localStream, createPeer, peer, ongoingCall]);
 
-    const handleHangup=useCallback(({})=>{},[])
-//creatign peer
-   
+    const handleJoinCall = useCallback(async (ongoingCall) => {
+        setOngoingCall(prev => prev ? { ...prev, isRinging: false } : prev);
 
-    const handleJoinCall=useCallback(async(ongoingCall)=>{
-        //console.log("joining call",ongoingCall);
-        setOngoingCall(prev=>{
-            if(prev){
-                return {...prev,isRinging:false}
-            }
-            return prev;
-        })
-
-        const stream=await getMediaStream();
-        if(!stream){
+        const stream = await getMediaStream();
+        if (!stream) {
             console.error("No stream in handle call");
-                return;
+            return;
         }
 
-        const newPeer=createPeer(stream,true);
+        const newPeer = createPeer(stream, false);
         setPeer({
-            peerConnection:newPeer,
-            participantUser:ongoingCall.participants.caller,
-            stream:undefined
-        })
-
-        newPeer.on('signal',async(data)=>{
-            if(socket){
-                socket.emit('webrtcSignal',{
-                    sdp:data,
-                    ongoingCall,
-                    isCaller:false
-                });
-            }
+            peerConnection: newPeer,
+            participantUser: ongoingCall.participants.caller,
+            stream: undefined
         });
 
-    },[socket,currentSocketUser])
-
+    }, [createPeer, getMediaStream]);
 
     useEffect(() => {
-        const newSocket=io()
-        setSocket(newSocket)
+        const newSocket = io();
+        setSocket(newSocket);
         return () => {
-            newSocket.disconnect()
+            newSocket.disconnect();
         }
-    }
-    ,[user])
+    }, [user]);
 
     useEffect(() => {
-        if(socket===null) return;
+        if (socket === null) return;
 
-        if(socket.connected){
-            onConnect()
+        if (socket.connected) {
+            onConnect();
         }
 
-        function onConnect(){
-            setIsSocketConnected(true)
+        function onConnect() {
+            setIsSocketConnected(true);
         }
 
-        function onDisconnect(){
-            setIsSocketConnected(false)
+        function onDisconnect() {
+            setIsSocketConnected(false);
         }
 
-        socket.on('connect',onConnect)
-        socket.on('disconnect',onDisconnect)
+        socket.on('connect', onConnect);
+        socket.on('disconnect', onDisconnect);
 
         return () => {
-            socket.off('connect',onConnect)
-            socket.off('disconnect',onDisconnect)
-        }
-    }
-    ,[socket])
-
-
+            socket.off('connect', onConnect);
+            socket.off('disconnect', onDisconnect);
+        };
+    }, [socket]);
 
     useEffect(() => {
-        
-        if(!socket || !isSocketConnected) return;
+        if (!socket || !isSocketConnected) return;
 
-        socket.emit('addNewUser', user)
-        socket.on('getUsers',(res)=>{
-            setOnlineUsers(res)
-        })
+        socket.emit('addNewUser', user);
+        socket.on('getUsers', (res) => {
+            setOnlineUsers(res);
+        });
 
         console.log("User added to socket", user);
         return () => {
             socket.off('getUsers');
-        }
-    }
-    ,[socket,isSocketConnected,user])
+        };
+    }, [socket, isSocketConnected, user]);
+
+    useEffect(() => {
+        if (!socket || !isSocketConnected) return;
+
+        socket.on('incomingCall', onIncomingCall);
+        socket.on('webrtcSignal', completePeerConnection);
+
+        return () => {
+            socket.off('incomingCall', onIncomingCall);
+            socket.off('webrtcSignal', completePeerConnection);
+        };
+    }, [socket, isSocketConnected, user, onIncomingCall, completePeerConnection]);
 
 
     useEffect(() => {
-        if(!socket || !isSocketConnected) return;
-
-        socket.on('incomingCall',onIncomingCall)
-        socket.on('webrtcSignal',completePeerConnection)
-
+        if (!socket || !isSocketConnected) return;
+    
+        // Listen for hangup signal from the other peer
+        socket.on('hangup', () => {
+            if (peer) {
+                peer.peerConnection.destroy();
+                setPeer(null);
+            }
+    
+            if (localStream) {
+                localStream.getTracks().forEach((track) => track.stop());
+                setLocalStream(null);
+            }
+    
+            if (ongoingCall) {
+                setOngoingCall(null);
+            }
+        });
+    
         return () => {
-            socket.off('incomingCall',onIncomingCall)
-        }
-    },[socket,isSocketConnected,user,onIncomingCall])
+            socket.off('hangup');
+        };
+    }, [socket, isSocketConnected, peer, localStream, ongoingCall]);
+    
 
-
-
-    // Effect to update localStorage when user or mail changes
+    // Handle localStorage updates
     useEffect(() => {
         if (user !== null) {
             localStorage.setItem('user', JSON.stringify(user));
@@ -313,35 +306,29 @@ const UserContextProvider = ({ children }) => {
         } else {
             localStorage.removeItem('chatId');
         }
-    }
-    , [chatId]);
-
-
-
-    // Update functions to change state and localStorage
-    const updateUser = (newUser) => {
-        setUser(newUser);
-    };
-
-    const updateMail = (newMail) => {
-        setMail(newMail);
-    };
-
-    const updateUid = (newUid) => {
-        setUid(newUid);
-    };
-
-    const updateChatId = (newChatId) => {
-        setChatId(newChatId);
-    };
-
-
+    }, [chatId]);
 
     return (
-        <UserContext.Provider value={{ user, setUser: updateUser, mail, setMail: updateMail,uid, setUid: updateUid,chatId,setChatId:updateChatId,onlineUsers,setOnlineUsers,handleCall,ongoingCall,localStream,handleJoinCall }}>
+        <UserContext.Provider value={{
+            user, setUser,
+            mail, setMail,
+            uid, setUid,
+            chatId, setChatId,
+            socket,
+            isSocketConnected,
+            onlineUsers,
+            currentSocketUser,
+            localStream,
+            peer,
+            ongoingCall,
+            handleCall,
+            handleJoinCall,
+            handleHangup,
+            getMediaStream
+        }}>
             {children}
         </UserContext.Provider>
     );
-}
- 
+};
+
 export default UserContextProvider;
