@@ -185,7 +185,7 @@ function UserDashboard() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total Posts</span>
-              <span className="text-2xl font-bold">2</span>
+              <span className="text-2xl font-bold">{blogs.length}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Questions Asked</span>

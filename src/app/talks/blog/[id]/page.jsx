@@ -61,7 +61,7 @@ export default function Home({ params }) {
             if (response.ok) {
                 parseStream(response, (chunk) => {
                     let a = chunk.replace(/\\n/g, "\n");
-                    console.log(a);
+                    //console.log(a);
                     setExplanation(a);
                 });
             } else {

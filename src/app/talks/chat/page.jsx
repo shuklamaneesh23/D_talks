@@ -1,5 +1,6 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
+import { useState } from "react";
 import UserContext from "@/context/UserContext";
 
 export default function Chat() {
@@ -13,7 +14,7 @@ export default function Chat() {
                 `https://d-talks-backend.vercel.app/api/v1/chats/getAllChats/${id}`
             );
             const data = await response.json();
-            console.log(data.chats);
+            //console.log(data.chats);
             setChat(data.chats);
             //setChat(data.chat);
             //setReceiver(data.chat.participants.filter((p) => p.uid !== id)[0]);
@@ -35,7 +36,8 @@ export default function Chat() {
 
     return (
         <>
-            <div className="w-3/4  p-4">
+            {
+                uid? (<div className="w-3/4  p-4">
                 <h2 className="text-2xl font-bold">Recent chats</h2>
                 <div className="overflow-y-auto flex-grow max-h-[80vh] mb-16">
                     <div className="mt-4 gap-6 space-y-6">
@@ -68,7 +70,10 @@ export default function Chat() {
                         ))}
                     </div>
                 </div>
-            </div>
+            </div>):(
+                <div>Hello</div>
+            )
+            }
         </>
     );
 }

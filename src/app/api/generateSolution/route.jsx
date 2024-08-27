@@ -18,7 +18,7 @@ export async function POST(req) {
         const stream = GoogleGenerativeAIStream(geminiStream);
         //console.log(stream)
 
-        console.log(new StreamingTextResponse(stream));
+        //console.log(new StreamingTextResponse(stream));
         // Respond with the stream
 
         return new StreamingTextResponse(stream);

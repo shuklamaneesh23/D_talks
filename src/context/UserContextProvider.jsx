@@ -1,30 +1,31 @@
 "use client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect,useState } from "react";
 import UserContext from "./UserContext";
 import { io } from "socket.io-client";
 import Peer from 'simple-peer';
 
 
 const UserContextProvider = ({ children }) => {
-    const [user, setUser] = React.useState(() => {
-        const storedUser = localStorage.getItem('user');
-        return storedUser ? JSON.parse(storedUser) : null;
-    });
+    const [user, setUser] = useState(null);
+    const [mail, setMail] = useState(null);
+    const [uid, setUid] = useState(null);
+    const [chatId, setChatId] = useState(null);
 
-    const [mail, setMail] = React.useState(() => {
-        const storedMail = localStorage.getItem('mail');
-        return storedMail ? JSON.parse(storedMail) : null;
-    });
+    // Fetch data from localStorage on initial load
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedUser = localStorage.getItem('user');
+            const storedMail = localStorage.getItem('mail');
+            const storedUid = localStorage.getItem('uid');
+            const storedChatId = localStorage.getItem('chatId');
 
-    const [uid, setUid] = React.useState(() => {
-        const storedUid = localStorage.getItem('uid');
-        return storedUid ? JSON.parse(storedUid) : null;
-    });
+            setUser(storedUser ? JSON.parse(storedUser) : null);
+            setMail(storedMail ? JSON.parse(storedMail) : null);
+            setUid(storedUid ? JSON.parse(storedUid) : null);
+            setChatId(storedChatId ? JSON.parse(storedChatId) : null);
+        }
+    }, []);
 
-    const [chatId, setChatId] = React.useState(() => {
-        const storedChatId = localStorage.getItem('chatId');
-        return storedChatId ? JSON.parse(storedChatId) : null;
-    });
 
     const [socket, setSocket] = React.useState(null);
     const [isSocketConnected, setIsSocketConnected] = React.useState(false);
@@ -35,8 +36,8 @@ const UserContextProvider = ({ children }) => {
 
     const currentSocketUser = onlineUsers?.find(u => u.userId === user);
 
-    console.log("currentSocketUser", currentSocketUser);
-    console.log("userH", user);
+   //console.log("currentSocketUser", currentSocketUser);
+    //console.log("userH", user);
 
     const getMediaStream = useCallback(async (faceMode) => {
         if (localStream) return localStream;
@@ -100,7 +101,7 @@ const UserContextProvider = ({ children }) => {
             isRinging: false
         });
         socket.emit('call', participants);
-        console.log("setting", participants);
+        //console.log("setting", participants);
     }, [socket, currentSocketUser, ongoingCall]);
 
     const onIncomingCall = useCallback((participants) => {
@@ -303,38 +304,31 @@ const UserContextProvider = ({ children }) => {
     }, [socket, isSocketConnected, peer, localStream, ongoingCall]);
     
 
-    // Handle localStorage updates
+       // Update localStorage when state changes
     useEffect(() => {
-        if (user !== null) {
+        if (typeof window !== 'undefined' && user !== null) {
             localStorage.setItem('user', JSON.stringify(user));
-        } else {
-            localStorage.removeItem('user');
         }
     }, [user]);
 
     useEffect(() => {
-        if (mail !== null) {
+        if (typeof window !== 'undefined' && mail !== null) {
             localStorage.setItem('mail', JSON.stringify(mail));
-        } else {
-            localStorage.removeItem('mail');
         }
     }, [mail]);
 
     useEffect(() => {
-        if (uid !== null) {
+        if (typeof window !== 'undefined' && uid !== null) {
             localStorage.setItem('uid', JSON.stringify(uid));
-        } else {
-            localStorage.removeItem('uid');
         }
     }, [uid]);
 
     useEffect(() => {
-        if (chatId !== null) {
+        if (typeof window !== 'undefined' && chatId !== null) {
             localStorage.setItem('chatId', JSON.stringify(chatId));
-        } else {
-            localStorage.removeItem('chatId');
         }
     }, [chatId]);
+    
 
     return (
         <UserContext.Provider value={{

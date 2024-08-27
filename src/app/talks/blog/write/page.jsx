@@ -1,6 +1,8 @@
 "use client";
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+
 import React, { useContext, useState } from 'react';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the Quill CSS
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -13,7 +15,7 @@ const CreateBlogPost = () => {
     const [tag, setTag] = useState(''); // New state for tags
     const {uid}=useContext(UserContext);
     const id=uid;
-    console.log(id);
+    //console.log(id);
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
@@ -51,10 +53,6 @@ const CreateBlogPost = () => {
         }
         formData.append('authorName', id);
         try{
-            //print form data
-            console.log(formData.get('authorName'));
-            //data type of authorName
-            console.log(typeof(formData.get('authorName')));
             const response = await axios.post('https://d-talks-backend.vercel.app/api/v1/blogs', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',

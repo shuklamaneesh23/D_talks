@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
             );
             const data = await response.json();
             setUserObj(data);
-            setReqCount(data.frndRequests.length);
+            setReqCount(data?.frndRequests?.length);
         };
 
         fetchCounts();
@@ -89,8 +89,10 @@ const Layout = ({ children }) => {
     };
 
     return (
+        
         <div className="flex h-[100vh]">
-            <div className="w-1/4 bg-gray-50 border-r max-h-[100vh]">
+            {uid?(
+                <div className="w-1/4 bg-gray-50 border-r max-h-[100vh]">
                 <div className="mt-8 p-4">
                 <Link href="/talks/chat">
                     <h3 className="font-bold text-xl">Overview</h3>
@@ -173,7 +175,9 @@ const Layout = ({ children }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>) : (
+                <div>Please Login to Chat</div>
+                )}
             <aside className="max-h-screen sticky py-8 w-full">{children}</aside>
         </div>
     );
