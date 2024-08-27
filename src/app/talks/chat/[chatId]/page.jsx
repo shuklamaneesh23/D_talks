@@ -9,7 +9,7 @@ import VideoCall from "@/components/utils/videoCall";
 
 const ChatWindow = () => {
     const { chatId, uid, onlineUsers, handleCall } = useContext(UserContext);
-    console.log("onUser", onlineUsers);
+    //console.log("onUser", onlineUsers);
     const id = uid;
     //we need to set r2 as that user here whose user.profile===receiver.name from the onlineUsers array
 
@@ -91,7 +91,7 @@ const ChatWindow = () => {
                 }
             );
             const data = await response.json();
-            console.log("dataM", data);
+           // console.log("dataM", data);
             setCont("");
             //setMessages((messages) => [...messages, data.message]);
         } catch (error) {

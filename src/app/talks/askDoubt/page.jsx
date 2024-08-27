@@ -57,7 +57,7 @@ function QuestionForm() {
                     throw new Error("Failed to fetch user data.");
                 }
                 const data = await response.json();
-                console.log("data", data);
+                //console.log("data", data);
                 formData.append("authorName", data.username);
             } catch (error) {
                 formData.append("authorName", "Anonymous");
@@ -76,7 +76,7 @@ function QuestionForm() {
 
         // API call to submit the form data
         try {
-            console.log("formData", formData.content);
+            //console.log("formData", formData.content);
             const response = await fetch("https://d-talks-backend.vercel.app/api/v1/questions/", {
                 method: "POST",
                 body: formData,

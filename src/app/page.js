@@ -2,8 +2,6 @@ import Navbar from "@/components/UI/navbar.jsx";
 import StepsCard from "@/components/HomePage/StepsCard";
 import HeroSection from "@/components/HomePage/HeroSection";
 import QuestionsList from "./talks/questions/page";
-import Footer from "@/components/UI/footer";
-import Link from "next/link";
 
 export default function Home() {
   return (

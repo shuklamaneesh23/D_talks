@@ -126,8 +126,7 @@ export default function StackOverflowQuestionView({ params }) {
                 upvotes: question.upvotes + 1,
                 downvotes: question.downvotes - 1,
             });
-            console.log("MshuklaJi");
-            console.log(question.upvotes - question.downvotes);
+            //console.log(question.upvotes - question.downvotes);
         } else if (userVoteStatus === "none") {
             // If no previous vote, simply add 1
             setQuestion({
@@ -155,7 +154,7 @@ export default function StackOverflowQuestionView({ params }) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.log("Mail", mail);
+            //console.log("Mail", mail);
             console.error("Failed to downvote the question:", errorText);
             return;
         }
@@ -371,13 +370,14 @@ export default function StackOverflowQuestionView({ params }) {
                         <QuestionTime createdAt={question.createdAt} />
                     </div>
                     {/* image of the question */}
-                    <Image
+                    {question.image && (
+                        <Image
                         src={question.image}
                         className="w-full h-auto object-cover mt-4"
                         width={500}
                         height={300}
                         alt="Question Image"
-                    />
+                    />)}
                     <button
                         onClick={generateSolution}
                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
