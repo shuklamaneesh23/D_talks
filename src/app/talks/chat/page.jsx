@@ -26,7 +26,7 @@ export default function Chat() {
             //setLoading(false);
         } catch (error) {
             console.error("Error fetching chat:", error);
-            setLoading(false);
+            //setLoading(false);
         }
     };
 
