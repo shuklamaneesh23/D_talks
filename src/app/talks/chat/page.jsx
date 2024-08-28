@@ -11,7 +11,7 @@ export default function Chat() {
     const fetchChat = async () => {
         try {
             const response = await fetch(
-                `https://d-talks-backend.vercel.app/api/v1/chats/getAllChats/${id}`
+                `https://axios-week.onrender.com/api/v1/chats/getAllChats/${id}`
             );
             const data = await response.json();
             //console.log(data.chats);
@@ -71,7 +71,7 @@ export default function Chat() {
                     </div>
                 </div>
             </div>):(
-                <div>Hello</div>
+                <div>Loading</div>
             )
             }
         </>

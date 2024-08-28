@@ -20,7 +20,7 @@ const AllFrnds = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/users/getFriends/${id}`);
+            const response = await fetch(`https://axios-week.onrender.com/api/v1/users/getFriends/${id}`);
             const data = await response.json();
             setUsers(data);
             console.log("data", data);
@@ -35,7 +35,7 @@ const AllFrnds = () => {
         //console.log("friendId", friendId);
         //console.log("id", id);
         try {
-            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/chats/createChat`, {
+            const response = await fetch(`https://axios-week.onrender.com/api/v1/chats/createChat`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -67,11 +67,11 @@ const AllFrnds = () => {
                     >
                         <div className="flex items-center">
                             <span className="w-12 h-12 bg-gray-300 text-white rounded-full flex items-center justify-center text-lg font-bold">
-                                {user.email[0].toUpperCase()}
+                                {user?.email[0].toUpperCase() || "A"}
                             </span>
                             <div className="ml-4">
-                                <h3 className="text-lg font-bold">{user.email}</h3>
-                                <p className="text-gray-500">{user.name}</p>
+                                <h3 className="text-lg font-bold">{user?.email || "random@random.com"}</h3>
+                                <p className="text-gray-500">{user?.name || "randomM"}</p>
                             </div>
                         </div>
                         

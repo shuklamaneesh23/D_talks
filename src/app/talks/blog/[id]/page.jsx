@@ -27,10 +27,10 @@ export default function Home({ params }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const mainPostRes = await axios.get(`https://d-talks-backend.vercel.app/api/v1/blogs/${id}`);
+                const mainPostRes = await axios.get(`https://axios-week.onrender.com/api/v1/blogs/${id}`);
                 setMainPost(mainPostRes.data);
 
-                const allPostsRes = await axios.get('https://d-talks-backend.vercel.app/api/v1/blogs');
+                const allPostsRes = await axios.get('https://axios-week.onrender.com/api/v1/blogs');
                 const allPosts = allPostsRes.data;
                 setPosts(allPosts.filter(post => post._id !== id).slice(0, 3));
             } catch (err) {

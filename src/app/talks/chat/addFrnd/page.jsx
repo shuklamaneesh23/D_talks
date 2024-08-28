@@ -31,7 +31,7 @@ const UserListWithRequests = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch(`https://d-talks-backend.vercel.app/api/v1/users/getUserWhoAreNotFriends/${id}`); // Replace with your API endpoint
+            const response = await fetch(`https://axios-week.onrender.com/api/v1/users/getUserWhoAreNotFriends/${id}`); // Replace with your API endpoint
             const data = await response.json();
             setUsers(data);
             console.log("data", data);
@@ -44,7 +44,7 @@ const UserListWithRequests = () => {
 
     const sendFriendRequest = async (userId) => {
         try {
-            const response = await axios.post('https://d-talks-backend.vercel.app/api/v1/users/sendFriendRequest', {
+            const response = await axios.post('https://axios-week.onrender.com/api/v1/users/sendFriendRequest', {
                 uid: id,  // Assuming `id` is defined and correct
                 fid: userId,
             }, {
@@ -85,7 +85,7 @@ const UserListWithRequests = () => {
             <div className="overflow-y-auto flex-grow max-h-[80vh] mb-16">
 
             <ul className="space-y-4">
-                {users.map((user) => (
+                {users.length>0 &&  users.map((user) => (
                     <li
                         key={user.uid}
                         className="flex items-center justify-between p-4 border rounded-lg"

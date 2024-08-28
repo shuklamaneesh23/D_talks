@@ -32,7 +32,7 @@ export default function RegisterLogin() {
         try {
             console.log("Adding user");
             console.log("name",name);
-            const res=await axios.post("https://d-talks-backend.vercel.app/api/v1/users/addUser",{
+            const res=await axios.post("https://axios-week.onrender.com/api/v1/users/addUser",{
                 email:email,
                 name:name,
                 uid:auth.currentUser.uid,

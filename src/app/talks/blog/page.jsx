@@ -24,7 +24,7 @@ export default function Home() {
         const fetchPosts = async () => {
             try {
                 const res = await axios.get(
-                    "https://d-talks-backend.vercel.app/api/v1/blogs"
+                    "https://axios-week.onrender.com/api/v1/blogs"
                 );
                 setPosts(res.data);
             } catch (err) {

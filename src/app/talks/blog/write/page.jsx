@@ -53,7 +53,7 @@ const CreateBlogPost = () => {
         }
         formData.append('authorName', id);
         try{
-            const response = await axios.post('https://d-talks-backend.vercel.app/api/v1/blogs', formData, {
+            const response = await axios.post('https://axios-week.onrender.com/api/v1/blogs', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

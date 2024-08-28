@@ -25,7 +25,7 @@ export default function StackOverflowQuestionView({ params }) {
     const getDetailedQuestion = async () => {
         try {
             const response = await fetch(
-                `https://d-talks-backend.vercel.app/api/v1/questions/getQuestion/${id}`
+                `https://axios-week.onrender.com/api/v1/questions/getQuestion/${id}`
             );
             if (!response.ok) {
                 throw new Error("Failed to fetch question.");
@@ -102,7 +102,7 @@ export default function StackOverflowQuestionView({ params }) {
 
     const handleUpvote = async () => {
         const response = await fetch(
-            `https://d-talks-backend.vercel.app/api/v1/votes/upvote/${id}`,
+            `https://axios-week.onrender.com/api/v1/votes/upvote/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -142,7 +142,7 @@ export default function StackOverflowQuestionView({ params }) {
 
     const handleDownvote = async () => {
         const response = await fetch(
-            `https://d-talks-backend.vercel.app/api/v1/votes/downvote/${id}`,
+            `https://axios-week.onrender.com/api/v1/votes/downvote/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -185,7 +185,7 @@ export default function StackOverflowQuestionView({ params }) {
     const handleAnswerUpvote = async (answerId) => {
         // Make an API request to handle the upvote
         const response = await fetch(
-            `https://d-talks-backend.vercel.app/api/v1/votes/upvoteAnswer/${id}`,
+            `https://axios-week.onrender.com/api/v1/votes/upvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -233,7 +233,7 @@ export default function StackOverflowQuestionView({ params }) {
     const handleAnswerDownvote = async (answerId) => {
         // Make an API request to handle the downvote
         const response = await fetch(
-            `https://d-talks-backend.vercel.app/api/v1/votes/downvoteAnswer/${id}`,
+            `https://axios-week.onrender.com/api/v1/votes/downvoteAnswer/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -308,7 +308,7 @@ export default function StackOverflowQuestionView({ params }) {
         //console.log("mshukl", id);
         //console.log("newAnswerObj", newAnswerObj);
         const response = await fetch(
-            `https://d-talks-backend.vercel.app/api/v1/questions/answerQuestion/${id}`,
+            `https://axios-week.onrender.com/api/v1/questions/answerQuestion/${id}`,
             {
                 method: "PUT",
                 headers: {
